@@ -15,7 +15,7 @@ import math
 
 w_t = []
 
-with open("./Bank/Latino/la_llct-ud-test.conllu") as fd:
+with open("./Bank/Latin/la_llct-ud-test.conllu") as fd:
     rd = csv.reader(fd, delimiter="\t", quotechar='"')
     for row in rd:
         if ((len(row))> 3):
