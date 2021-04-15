@@ -34,6 +34,21 @@ p_transition = []
 for key, value in w_t_occ.items():
     wt_c =t_occ.get(key[1])
     p_emission.append((key[0], key[1], math.log(value/wt_c)))
-    
 
-    
+
+#compute transition probability
+for t in t_occ.keys():
+    if t != '---':
+        for t1 in t_occ.keys():
+            if t1 != t and t1 != '---':
+                count = 0
+                for i in range(1, len(w_t)):
+                    if w_t[i][1] == t:
+                        if w_t[i-1][1] == t1:
+                            count += 1
+                p_transition.append((t, t1, count/t_occ.get(t1)))
+
+                            
+                            
+                    
+                
