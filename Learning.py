@@ -37,16 +37,16 @@ for key, value in w_t_occ.items():
 
 
 #compute transition probability
-for t in t_occ.keys():
-    if t != '---':
-        for t1 in t_occ.keys():
-            if t1 != t and t1 != '---':
+for t1 in t_occ.keys():
+    if t1 != '---':
+        for t in t_occ.keys():
+            if t != t1 and t != '---':
                 count = 0
                 for i in range(1, len(w_t)):
-                    if w_t[i][1] == t:
-                        if w_t[i-1][1] == t1:
+                    if w_t[i][1] == t1:
+                        if w_t[i-1][1] == t:
                             count += 1
-                p_transition.append((t, t1, count/t_occ.get(t1)))
+                p_transition.append((t1, t, count/t_occ.get(t)))
 
                             
                             
