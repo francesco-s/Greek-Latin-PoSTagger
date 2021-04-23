@@ -62,9 +62,6 @@ for key, value in w_s_occ.items():
     else:
         p_emission_init[key[1]] = {key[0]: prob}
     
-
-
-
 p_transition_dict = dict()
 # compute transition probability
 # prob t1 given t
@@ -91,9 +88,9 @@ for t1 in t_occ.keys():
 
 i = 0
 array_p_transition = np.zeros((len(p_transition), len(p_transition)))
-status_order = np.empty(len(p_transition), dtype=object)
+states = np.empty(len(p_transition), dtype=object)
 for key, values in p_transition.items():
-    status_order[i] = str(key)
+    states[i] = str(key)
     array_p_transition[i, :] = values
     i += 1
 
@@ -101,26 +98,18 @@ for key, values in p_transition.items():
 
 y = '+ In Dei omnipotentis nomine, regnante domno nostro Karolus divina faventem clementia imperatore augusto, anno imperii eius septimo, pridie idus augusti indictione quinta.'
 
-# Initialize the priors with default (uniform dist) if not given by caller
 input_splitted = y.split()
 T = len(input_splitted)
 
-# Initilaize the tracking tables from first observation
+# Tracking tables from first observation
 viterbi=[{}]
-for i in status_order:
-    #viterbi[0][i]=start_p[i]*emit_p[i][obs[0]]
+for i in states:
     try:
         viterbi[0][i]=p_transition_dict['INIT'][i]*p_emission[i][input_splitted[0]]
     except KeyError:
         viterbi[0][i]=p_transition_dict['INIT'][i]*0.001
-        print ('keyerror')
+        #print ('keyerror')
     
-'''try:
-    viterbi[:, 0] = np.array(p_transition['INIT']) * p_emission_init['INIT'][input_splitted[0]]
-except KeyError:
-    viterbi[:, 0] = np.array(p_transition['INIT']) * 0.001
-    print ('keyerror')'''
-
 def dptable(V):
     yield " ".join(("%10d" % i) for i in range(len(V)))
     for y in V[0]:
@@ -128,11 +117,11 @@ def dptable(V):
 
 for t in range(1, T):
     viterbi.append({})
-    for y in status_order:
+    for y in states:
         try:
-            (prob, state) = max((viterbi[t-1][y0] * p_transition_dict[y0][y] * p_emission[y][input_splitted[t]], y0) for y0 in status_order)
+            (prob, state) = max((viterbi[t-1][y0] * p_transition_dict[y0][y] * p_emission[y][input_splitted[t]], y0) for y0 in states)
         except KeyError:
-            (prob, state) = max((viterbi[t-1][y0] * p_transition_dict[y0][y] * 0.001, y0) for y0 in status_order)
+            (prob, state) = max((viterbi[t-1][y0] * p_transition_dict[y0][y] * 0.001, y0) for y0 in states)
         viterbi[t][y] = prob
     #for i in dptable(viterbi):
         #print (i)
@@ -143,18 +132,4 @@ for t in range(1, T):
                 opt.append(x)
     
 h=max(viterbi[-1].values())
-print ('The steps of states are '+' '.join(opt)+' with highest probability of %s'%h)
-# Iterate throught the observations updating the tracking tables
-'''for i in range(1, T):
-    for s in range(0, len(status_order)):
-        try:
-            viterbi[s, i] = max(viterbi[:, i - 1]) * p_emission[status_order[s]][input_splitted[i]] * p_prova[status_order[s]][status_order[s-1]]
-            backpointer[s, i] = max(viterbi[:, i - 1]) * p_emission[status_order[s]][input_splitted[i]]
-            print(f'{p_emission[status_order[s]][input_splitted[i]]}', f'{status_order[s]}', f'{input_splitted[i]}')
-        except KeyError:
-            viterbi[s, i] = max(viterbi[:, i - 1]) * 0.001
-            print ('keyerror', f'{status_order[s]}', f'{input_splitted[i]}')
-        #viterbi[:, i] = np.max(viterbi[:, i - 1] * A.T * B[np.newaxis, :, y[i]].T, 1)
-        #backpointer[:, i] = np.argmax(T1[:, i - 1] * A.T, 1)'''
-        
-        
+print ('The steps of PoS are '+' '.join(opt)+' with probability of %s'%h)
