@@ -100,17 +100,10 @@ for key, values in p_transition.items():
 # VITERBI
 
 y = '+ In Dei omnipotentis nomine, regnante domno nostro Karolus divina faventem clementia imperatore augusto, anno imperii eius septimo, pridie idus augusti indictione quinta.'
-Pi = None
 
-# Cardinality of the state space
-K = array_p_transition.shape[0]
 # Initialize the priors with default (uniform dist) if not given by caller
-Pi = Pi if Pi is not None else np.full(K, 1 / K)
 input_splitted = y.split()
 T = len(input_splitted)
-viterbi = np.empty((K, T), 'd')
-backpointer = np.empty((K, T), 'B')
-
 
 # Initilaize the tracking tables from first observation
 viterbi=[{}]
@@ -127,7 +120,6 @@ for i in status_order:
 except KeyError:
     viterbi[:, 0] = np.array(p_transition['INIT']) * 0.001
     print ('keyerror')'''
-backpointer[:, 0] = 0
 
 def dptable(V):
     yield " ".join(("%10d" % i) for i in range(len(V)))
