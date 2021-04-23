@@ -9,10 +9,7 @@ Created on Thu Apr 15 15:00:17 2021
 import csv
 from collections import Counter
 import numpy as np
-
-
-#  import pandas as pd
-# data = pd.read_csv("./Bank/Latino/la_llct-ud-test.conllu", nrows=1)
+import nltk
 
 w_t = []
 w_s= []
@@ -76,60 +73,79 @@ for t1 in t_occ.keys():
         '''if t in p_transition:
             p_transition[t].append([t1, prob])
         else:
-            p_transition[t] = [[t1, prob]]'''
+            p_transition[t] = [[t1, prob]]
+        if t in p_transition:
+            p_transition[t].append(prob)
+        else:
+            p_transition[t] = [prob]    
+        '''
         if t in p_transition_dict:
             p_transition_dict[t].update({t1: prob})
         else:
             p_transition_dict[t] = {t1: prob}
-        if t in p_transition:
-            p_transition[t].append(prob)
-        else:
-            p_transition[t] = [prob]
+        
 
 i = 0
-array_p_transition = np.zeros((len(p_transition), len(p_transition)))
-states = np.empty(len(p_transition), dtype=object)
-for key, values in p_transition.items():
+states = np.empty(len(p_transition_dict), dtype=object)
+for key in p_transition_dict.keys():
     states[i] = str(key)
-    array_p_transition[i, :] = values
     i += 1
 
 # VITERBI
 
-y = '+ In Dei omnipotentis nomine, regnante domno nostro Karolus divina faventem clementia imperatore augusto, anno imperii eius septimo, pridie idus augusti indictione quinta.'
+query = '+ In Dei omnipotentis nomine, regnante domno nostro Karolus divina faventem clementia imperatore augusto, anno imperii eius septimo, pridie idus augusti indictione quinta.'
 
-input_splitted = y.split()
+input_splitted =  nltk.word_tokenize(query) #y.split()
 T = len(input_splitted)
-
-# Tracking tables from first observation
-viterbi=[{}]
-for i in states:
-    try:
-        viterbi[0][i]=p_transition_dict['INIT'][i]*p_emission[i][input_splitted[0]]
-    except KeyError:
-        viterbi[0][i]=p_transition_dict['INIT'][i]*0.001
-        #print ('keyerror')
     
 def dptable(V):
     yield " ".join(("%10d" % i) for i in range(len(V)))
     for y in V[0]:
         yield "%.7s: " % y+" ".join("%.7s" % ("%f" % v[y]) for v in V)
+        
+# Tracking tables from first observation
+backtrace=[{}]
+for i in states:
+    try:
+        backtrace[0][i]=p_transition_dict['INIT'][i]*p_emission[i][input_splitted[0]]
+    except KeyError:
+        backtrace[0][i]=p_transition_dict['INIT'][i]*0.001
+        #print ('keyerror')
+
 
 for t in range(1, T):
-    viterbi.append({})
+    backtrace.append({})
     for y in states:
         try:
-            (prob, state) = max((viterbi[t-1][y0] * p_transition_dict[y0][y] * p_emission[y][input_splitted[t]], y0) for y0 in states)
+            (prob, state) = max((backtrace[t-1][y0] * p_transition_dict[y0][y] * p_emission[y][input_splitted[t]], y0) for y0 in states)
         except KeyError:
-            (prob, state) = max((viterbi[t-1][y0] * p_transition_dict[y0][y] * 0.001, y0) for y0 in states)
-        viterbi[t][y] = prob
+            # P(unk|NOUN) =1 --> quando non conosco la parola la considero un nome
+            '''if y == 'NOUN' :
+                (prob, state) = max((backtrace[t-1][y0] * p_transition_dict[y0][y] * 1, y0) for y0 in states)
+            else:
+                (prob, state) = max((backtrace[t-1][y0] * p_transition_dict[y0][y] * 0.001, y0) for y0 in states)'''
+            # P(unk|NOUN) =0.5 and P(unk|VERB) --> quando non conosco la parola la considero o un nome o un vrerbo
+            '''if y == 'NOUN' :
+                (prob, state) = max((backtrace[t-1][y0] * p_transition_dict[y0][y] * 0.5, y0) for y0 in states)
+            elif y == 'VERB':
+                (prob, state) = max((backtrace[t-1][y0] * p_transition_dict[y0][y] * 0.5, y0) for y0 in states)
+            else:
+                (prob, state) = max((backtrace[t-1][y0] * p_transition_dict[y0][y] * 0.001, y0) for y0 in states)'''
+            #P(unk|ti) = 1/#(PoS_TAGs)
+            (prob, state) = max((backtrace[t-1][y0] * p_transition_dict[y0][y] * (1 / len(states)), y0) for y0 in states)
+            
+        backtrace[t][y] = prob
     #for i in dptable(viterbi):
-        #print (i)
+    #   print (i)
     opt=[]
-    for j in viterbi:
+    for j in backtrace:
         for x,y in j.items():
             if j[x]==max(j.values()):
                 opt.append(x)
     
-h=max(viterbi[-1].values())
-print ('The steps of PoS are '+' '.join(opt)+' with probability of %s'%h)
+p=max(backtrace[-1].values())
+print ('The PoS are\n'+''
+       .join(map(''.join, zip([x + '/' for x in input_splitted], [x + '\n' for x in opt])))
+       +'\nWith probability of %s'%p)
+        
+        
