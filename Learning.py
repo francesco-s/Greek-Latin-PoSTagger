@@ -23,7 +23,11 @@ w_t = []
 w_s= []
 w_t.append(('INIT', 'INIT'))
 
-with open("./Bank/Greek/grc_perseus-ud-train.conllu") as fd:
+
+greek_train_tree_bank = "./Bank/Greek/grc_perseus-ud-train.conllu"
+latin_train_tree_bank = "./Bank/Latin/la_llct-ud-train.conllu"
+
+with open(latin_train_tree_bank) as fd:
     rd = csv.reader(fd, delimiter="\t", quotechar='"')
     i = -1
     for row in rd:
@@ -106,13 +110,24 @@ first_char_init = 9
 
 w_t_test = []
 
-with open("./Bank/Greek/grc_perseus-ud-test.conllu") as fd:
+greek_test_tree_bank = "./Bank/Greek/grc_perseus-ud-test.conllu"
+latin_test_tree_bank = "./Bank/Latin/la_llct-ud-test.conllu"
+
+with open(latin_test_tree_bank) as fd:
     rd = csv.reader(fd, delimiter="\t", quotechar='"')
     i = -1
     for row in rd:
         if len(row) == 1:
             if row[0].startswith('# text'):
-                query_list.append(row[0][first_char_init:len(row[0])].lower())
+               #if (row[0][len(row[0])-1] == '·'):
+                #    query_list.append(row[0][first_char_init:(len(row[0])-1)].lower() + ' ·')
+                    #print(len(query_list))
+                #else:
+                if '...' not in row[0]:
+                    query_list.append(row[0][first_char_init:(len(row[0]))].lower().replace('.', ' .').replace('·', ' ·'))
+                else:
+                    query_list.append(row[0][first_char_init:(len(row[0]))].lower().replace('·', ' ·'))
+
         elif len(row) > 3:
             w_t_test.append((row[1].lower(), row[3].lower()))
         
@@ -161,15 +176,20 @@ token_exclude = [
                  ('[', 'Verb', ']'),
                  ('[', 'X', ']'),
                  ('[', '--', ']'),
-                 ('[', 'participle', ']'), ('·')
+                 ('[', 'participle', ']')
                  ]
 
 states = np.delete(states, 0)
 
-for query in query_list:
-    tokenizer = MWETokenizer(token_exclude)
+tokenizer = MWETokenizer(token_exclude)
+
+all_words = []
+
+for value in p_emission.values():
+    all_words.extend(list(value.keys()))
+
+'''for query in query_list:
     input_splitted = tokenizer.tokenize(word_tokenize(query))
-    #input_splitted =  cltk.word_tokenize(query) #y.split()
     T = len(input_splitted)
     tag_target = 'noun'
     for t in range(0, T):
@@ -179,15 +199,11 @@ for query in query_list:
                 if max < value:
                     max = value
                     tag_target = key[1]
-        all_pos.append([input_splitted[t], tag_target])    
+        all_pos.append([input_splitted[t], tag_target])'''
 
-
-'''for query in query_list:
+for query in query_list:
         
-    tokenizer = MWETokenizer(token_exclude)
     input_splitted = tokenizer.tokenize(word_tokenize(query))
-
-    #input_splitted =  nltk.word_tokenize(query) #y.split()
     T = len(input_splitted)
     
     # Tracking tables from first observation
@@ -200,15 +216,27 @@ for query in query_list:
     
     
     for t in range(1, T):
+        input_splitted[t] = input_splitted[t].replace('_', '')
         backtrace.append({})
         for y in states:
             try:
-                (prob, state) = max((backtrace[t-1][y0] * p_transition_dict[y0][y] * p_emission[y][input_splitted[t]], y0) for y0 in states)
+                if input_splitted[t] not in all_words:
+                     # P(unk|NOUN) =0.5 and P(unk|VERB)
+                    '''if y == 'noun':
+                         (prob, state) = max((backtrace[t-1][y0] * p_transition_dict[y0][y] * 0.5, y0) for y0 in states)
+                    elif y == 'verb':
+                         (prob, state) = max((backtrace[t-1][y0] * p_transition_dict[y0][y] * 0.5, y0) for y0 in states)
+                    else:
+                        (prob, state) = max((backtrace[t-1][y0] * p_transition_dict[y0][y] * 0, y0) for y0 in states)'''
+                     #P(unk|ti) = 1/#(PoS_TAGs)
+                    (prob, state) = max((backtrace[t-1][y0] * p_transition_dict[y0][y] * (1 / len(states)), y0) for y0 in states)
+                else: 
+                    (prob, state) = max((backtrace[t-1][y0] * p_transition_dict[y0][y] * p_emission[y][input_splitted[t]], y0) for y0 in states)
                 #(prob, state) = max((backtrace[t-1][y0], y0) for y0 in states)
                 #prova = prob * p_transition_dict[state][y] * p_emission[y][input_splitted[t]]
             except KeyError:
                 # P(unk|NOUN) =1 --> quando non conosco la parola la considero un nome
-                if y == 'noun' :
+                '''if y == 'noun' :
                     (prob, state) = max((backtrace[t-1][y0] * p_transition_dict[y0][y] * 1, y0) for y0 in states)
                     #(prob, state) = max((backtrace[t-1][y0], y0) for y0 in states)
                     #prova = prob * p_transition_dict[state][y] * 1
@@ -222,8 +250,8 @@ for query in query_list:
                 else:
                     (prob, state) = max((backtrace[t-1][y0] * p_transition_dict[y0][y] * 0.0000001, y0) for y0 in states)
                 #P(unk|ti) = 1/#(PoS_TAGs)
-                #(prob, state) = max((backtrace[t-1][y0] * p_transition_dict[y0][y] * (1 / len(states)), y0) for y0 in states)
-                (prob, state) = max((backtrace[t-1][y0] * p_transition_dict[y0][y] * 0.0000011, y0) for y0 in states)
+                #(prob, state) = max((backtrace[t-1][y0] * p_transition_dict[y0][y] * (1 / len(states)), y0) for y0 in states)'''
+                (prob, state) = max((backtrace[t-1][y0] * p_transition_dict[y0][y] * 0.00000011, y0) for y0 in states)
             backtrace[t][y] = prob
         #for i in dptable(viterbi):
         #   print (i)
@@ -238,11 +266,19 @@ for query in query_list:
     #       .join(map(''.join, zip([x + '/' for x in input_splitted], [x + '\n' for x in opt])))
     #       +'\nWith probability of %s'%p)
     for l in range(0,T):
-        all_pos.append([input_splitted[l], opt[l]])'''    
+        all_pos.append([input_splitted[l], opt[l]])
 
 right_pos = 0
 wrong_pos = 0
 n = 0
+k=0
+
+for i in range(0, len(all_pos)):
+    if all_pos[i][0] == w_t_test[i][0]:
+        k+=1
+    else:
+        print(i)
+    i+=1
 
 for word in all_pos:
     if (word[1] == w_t_test[n][1]):
@@ -254,3 +290,4 @@ accuracy = right_pos/(right_pos+wrong_pos)
 print(accuracy)
 
         
+
