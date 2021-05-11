@@ -1,0 +1,1365 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+    \usepackage{iftex}
+    \ifPDFTeX
+    	\usepackage[T1]{fontenc}
+    	\usepackage{mathpazo}
+    \else
+    	\usepackage{fontspec}
+    \fi
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+    \usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{PoS\_ViterbiHMM}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb. 
+    \makeatletter
+        \newbox\Wrappedcontinuationbox 
+        \newbox\Wrappedvisiblespacebox 
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}} 
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}} 
+        \newcommand*\Wrappedcontinuationindent {3ex } 
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox} 
+        % Take advantage of the already applied Pygments mark-up to insert 
+        % potential linebreaks for TeX processing. 
+        %        {, <, #, %, $, ' and ": go to next line. 
+        %        _, }, ^, &, >, - and ~: stay at end of broken line. 
+        % Use of \textquotesingle for straight quote. 
+        \newcommand*\Wrappedbreaksatspecials {% 
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}% 
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}% 
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}% 
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}% 
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}% 
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}% 
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}% 
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}% 
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}% 
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}% 
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}% 
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}% 
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}% 
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}% 
+        } 
+        % Some characters . , ; ? ! / are not pygmentized. 
+        % This macro makes them "active" and they will insert potential linebreaks 
+        \newcommand*\Wrappedbreaksatpunct {% 
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}% 
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}% 
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}% 
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}% 
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}% 
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}% 
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}% 
+            \catcode`\.\active
+            \catcode`\,\active 
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active 
+            \lccode`\~`\~ 	
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+        
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active 	
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+    
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \hypertarget{pos-tagging-per-latino-e-greco-confronto-tra-baseline-e-hmm-viterbi}{%
+\paragraph{PoS tagging per latino e greco: confronto tra baseline e HMM
+(Viterbi)}\label{pos-tagging-per-latino-e-greco-confronto-tra-baseline-e-hmm-viterbi}}
+
+Francesco Sannicola
+
+    Librerie utilizzate:
+
+\begin{itemize}
+\tightlist
+\item
+  csv per la lettura dei corpus
+\item
+  math per utilizzare la funzione logaritmo
+\item
+  numpy, esattamente i moduli array, delete, empty. Vedremo una sola
+  struttura utilizzare questi moduli
+\item
+  time per il monitoraggio e il confronto dei tempi di esecuzione delle
+  due strategie
+\end{itemize}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{csv} \PY{k+kn}{import} \PY{n}{reader} \PY{k}{as} \PY{n}{csv\PYZus{}reader}
+\PY{k+kn}{from} \PY{n+nn}{numpy} \PY{k+kn}{import} \PY{n}{array} \PY{k}{as} \PY{n}{np\PYZus{}array}
+\PY{k+kn}{from} \PY{n+nn}{numpy} \PY{k+kn}{import} \PY{n}{delete} \PY{k}{as} \PY{n}{np\PYZus{}delete}
+\PY{k+kn}{from} \PY{n+nn}{numpy} \PY{k+kn}{import} \PY{n}{empty} \PY{k}{as} \PY{n}{np\PYZus{}empty}
+\PY{k+kn}{from} \PY{n+nn}{math} \PY{k+kn}{import} \PY{n}{log}
+\PY{k+kn}{import} \PY{n+nn}{time}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{itemize}
+\tightlist
+\item
+  Counter permetterà di contare le occorrenze di uno stesso elemento
+  all'interno di una struttura
+\end{itemize}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{collections} \PY{k+kn}{import} \PY{n}{Counter}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{itemize}
+\tightlist
+\item
+  word\_tokenize sarà utilizzato per estrarre le parole dalle frasi in
+  input
+\item
+  MWETokenizer permetterà di effettuare un preprocessing ai token (solo
+  nel latino)
+\end{itemize}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{nltk} \PY{k+kn}{import} \PY{n}{word\PYZus{}tokenize}
+\PY{k+kn}{from} \PY{n+nn}{nltk}\PY{n+nn}{.}\PY{n+nn}{tokenize} \PY{k+kn}{import} \PY{n}{MWETokenizer}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Il metodo trainParsing(file) ha come input il file train del corpus.
+
+In output avremo le coppie (parola, tag) lette dal file più le coppie
+(parola, INIT) e (parola, END). La struttura utilizzata, in questo caso,
+è la lista.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{trainParsing}\PY{p}{(}\PY{n}{file}\PY{p}{)}\PY{p}{:}
+    
+    \PY{c+c1}{\PYZsh{}w\PYZus{}e tutte le parole finali}
+    \PY{n}{w\PYZus{}e} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+    \PY{c+c1}{\PYZsh{}w\PYZus{}t tutte le parole con proprio tag più i delimitatori END e INIT}
+    \PY{n}{w\PYZus{}t} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+    \PY{c+c1}{\PYZsh{} w\PYZus{}s tutte le parole iniziali}
+    \PY{n}{w\PYZus{}s}\PY{o}{=} \PY{p}{[}\PY{p}{]}
+    
+    \PY{n}{w\PYZus{}t}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{INIT}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{INIT}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}
+    \PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{n}{file}\PY{p}{)} \PY{k}{as} \PY{n}{fd}\PY{p}{:}
+        \PY{n}{rd} \PY{o}{=} \PY{n}{csv\PYZus{}reader}\PY{p}{(}\PY{n}{fd}\PY{p}{,} \PY{n}{delimiter}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{quotechar}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZdq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{i} \PY{o}{=} \PY{o}{\PYZhy{}}\PY{l+m+mi}{1}
+        \PY{k}{for} \PY{n}{row} \PY{o+ow}{in} \PY{n}{rd}\PY{p}{:}
+            \PY{k}{if} \PY{n+nb}{len}\PY{p}{(}\PY{n}{row}\PY{p}{)} \PY{o}{\PYZgt{}} \PY{l+m+mi}{3}\PY{p}{:}
+                \PY{k}{if} \PY{n}{i} \PY{o}{==} \PY{l+m+mi}{0}\PY{p}{:}
+                    \PY{n}{w\PYZus{}s}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{(}\PY{n}{row}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{lower}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{INIT}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}
+                    \PY{n}{i} \PY{o}{=} \PY{l+m+mi}{1}
+                \PY{n}{w\PYZus{}t}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{(}\PY{n}{row}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{lower}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{row}\PY{p}{[}\PY{l+m+mi}{3}\PY{p}{]}\PY{o}{.}\PY{n}{lower}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+                \PY{n}{last\PYZus{}str} \PY{o}{=} \PY{n}{row}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{lower}\PY{p}{(}\PY{p}{)}
+            \PY{k}{if} \PY{n+nb}{len}\PY{p}{(}\PY{n}{row}\PY{p}{)} \PY{o}{==} \PY{l+m+mi}{0}\PY{p}{:}
+                \PY{n}{w\PYZus{}e}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{(}\PY{n}{last\PYZus{}str}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{END}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}
+                \PY{n}{w\PYZus{}t}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{END}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{END}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}
+                \PY{n}{w\PYZus{}t}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{INIT}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{INIT}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}
+                \PY{n}{i} \PY{o}{=} \PY{l+m+mi}{0}
+        \PY{n}{w\PYZus{}t}\PY{o}{.}\PY{n}{pop}\PY{p}{(}\PY{p}{)}
+    \PY{k}{return} \PY{n}{w\PYZus{}t}\PY{p}{,} \PY{n}{w\PYZus{}e}\PY{p}{,} \PY{n}{w\PYZus{}s} 
+\end{Verbatim}
+\end{tcolorbox}
+
+    Calocolo le coppie (parola, tag) dal file dev.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{devParsing}\PY{p}{(}\PY{n}{file}\PY{p}{)}\PY{p}{:}
+    \PY{n}{w\PYZus{}t\PYZus{}dev} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+    \PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{n}{file}\PY{p}{)} \PY{k}{as} \PY{n}{fd}\PY{p}{:}
+        \PY{n}{rd} \PY{o}{=} \PY{n}{csv\PYZus{}reader}\PY{p}{(}\PY{n}{fd}\PY{p}{,} \PY{n}{delimiter}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{quotechar}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZdq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{k}{for} \PY{n}{row} \PY{o+ow}{in} \PY{n}{rd}\PY{p}{:}
+            \PY{k}{if} \PY{n+nb}{len}\PY{p}{(}\PY{n}{row}\PY{p}{)} \PY{o}{\PYZgt{}} \PY{l+m+mi}{3}\PY{p}{:}
+                \PY{n}{w\PYZus{}t\PYZus{}dev}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{(}\PY{n}{row}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{lower}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{row}\PY{p}{[}\PY{l+m+mi}{3}\PY{p}{]}\PY{o}{.}\PY{n}{lower}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+    \PY{k}{return} \PY{n}{w\PYZus{}t\PYZus{}dev}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Parsing del file test: - calcolo coppie (parola, tag) - calcolo e
+parsificazione (solo per latino) delle frasi su cui testare gli
+algoritmi
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{testParsing}\PY{p}{(}\PY{n}{file}\PY{p}{)}\PY{p}{:}
+    \PY{n}{query\PYZus{}list} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+    \PY{n}{w\PYZus{}t\PYZus{}test} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+    
+    \PY{n}{first\PYZus{}char\PYZus{}init} \PY{o}{=} \PY{l+m+mi}{9}
+ 
+    \PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{n}{file}\PY{p}{)} \PY{k}{as} \PY{n}{fd}\PY{p}{:}
+        \PY{n}{rd} \PY{o}{=} \PY{n}{csv\PYZus{}reader}\PY{p}{(}\PY{n}{fd}\PY{p}{,} \PY{n}{delimiter}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{quotechar}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZdq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{i} \PY{o}{=} \PY{o}{\PYZhy{}}\PY{l+m+mi}{1}
+        \PY{k}{for} \PY{n}{row} \PY{o+ow}{in} \PY{n}{rd}\PY{p}{:}
+            \PY{k}{if} \PY{n+nb}{len}\PY{p}{(}\PY{n}{row}\PY{p}{)} \PY{o}{==} \PY{l+m+mi}{1}\PY{p}{:}
+                \PY{k}{if} \PY{n}{row}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{startswith}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsh{} text}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{:}
+                    \PY{k}{if} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{...}\PY{l+s+s1}{\PYZsq{}} \PY{o+ow}{not} \PY{o+ow}{in} \PY{n}{row}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{:}
+                        \PY{n}{query\PYZus{}list}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{row}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{n}{first\PYZus{}char\PYZus{}init}\PY{p}{:}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{row}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}\PY{p}{)}\PY{p}{]}\PY{o}{.}\PY{n}{lower}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{replace}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ .}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{replace}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{·}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ ·}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}
+                    \PY{k}{else}\PY{p}{:}
+                        \PY{n}{query\PYZus{}list}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{row}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{n}{first\PYZus{}char\PYZus{}init}\PY{p}{:}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{row}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}\PY{p}{)}\PY{p}{]}\PY{o}{.}\PY{n}{lower}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{replace}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{·}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ ·}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}
+    
+            \PY{k}{elif} \PY{n+nb}{len}\PY{p}{(}\PY{n}{row}\PY{p}{)} \PY{o}{\PYZgt{}} \PY{l+m+mi}{3}\PY{p}{:}
+                \PY{n}{w\PYZus{}t\PYZus{}test}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{(}\PY{n}{row}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{lower}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{row}\PY{p}{[}\PY{l+m+mi}{3}\PY{p}{]}\PY{o}{.}\PY{n}{lower}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+    \PY{k}{return} \PY{n}{w\PYZus{}t\PYZus{}test}\PY{p}{,} \PY{n}{query\PYZus{}list}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Percorso relativo dei corpus (test, dev, train).
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{greek\PYZus{}train\PYZus{}tree\PYZus{}bank} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{./Bank/Greek/grc\PYZus{}perseus\PYZhy{}ud\PYZhy{}train.conllu}\PY{l+s+s2}{\PYZdq{}}
+\PY{n}{latin\PYZus{}train\PYZus{}tree\PYZus{}bank} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{./Bank/Latin/la\PYZus{}llct\PYZhy{}ud\PYZhy{}train.conllu}\PY{l+s+s2}{\PYZdq{}}
+
+\PY{n}{latin\PYZus{}dev\PYZus{}tree\PYZus{}bank} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{./Bank/Latin/la\PYZus{}llct\PYZhy{}ud\PYZhy{}dev.conllu}\PY{l+s+s2}{\PYZdq{}}
+\PY{n}{greek\PYZus{}dev\PYZus{}tree\PYZus{}bank} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{./Bank/Greek/grc\PYZus{}perseus\PYZhy{}ud\PYZhy{}dev.conllu}\PY{l+s+s2}{\PYZdq{}}
+
+\PY{n}{greek\PYZus{}test\PYZus{}tree\PYZus{}bank} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{./Bank/Greek/grc\PYZus{}perseus\PYZhy{}ud\PYZhy{}test.conllu}\PY{l+s+s2}{\PYZdq{}}
+\PY{n}{latin\PYZus{}test\PYZus{}tree\PYZus{}bank} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{./Bank/Latin/la\PYZus{}llct\PYZhy{}ud\PYZhy{}test.conllu}\PY{l+s+s2}{\PYZdq{}}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Metodo utilizzato più avanti per il quarto metodo di smoothing.
+
+Sono necessari in input le coppie (parola, tag) appartenenti al file
+\textbf{\emph{dev}}.
+
+Vengono calcolate e restituite in output: - le parole che appaiono una
+sola volta - le coppie (parola, tag) per le parole che compaiono una
+sola volta
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{singleWordDistribution}\PY{p}{(}\PY{n}{w\PYZus{}t\PYZus{}dev}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\PYZsh{}obtain tuples word:tag appearing one time}
+    \PY{n}{single\PYZus{}occ\PYZus{}word\PYZus{}tag} \PY{o}{=} \PY{n+nb}{dict}\PY{p}{(}\PY{p}{)}
+    \PY{n}{single\PYZus{}occ\PYZus{}words} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{p}{\PYZob{}}\PY{n}{key}\PY{p}{:}\PY{n}{val} \PY{k}{for} \PY{n}{key}\PY{p}{,} \PY{n}{val} \PY{o+ow}{in} \PY{n}{Counter}\PY{p}{(}\PY{n}{i}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{w\PYZus{}t\PYZus{}dev}\PY{p}{)}\PY{o}{.}\PY{n}{items}\PY{p}{(}\PY{p}{)} \PY{k}{if} \PY{n}{val} \PY{o}{==} \PY{l+m+mi}{1}\PY{p}{\PYZcb{}}\PY{p}{)}
+    
+    \PY{n}{u}\PY{o}{=}\PY{l+m+mi}{0}
+    \PY{k}{for} \PY{n}{word} \PY{o+ow}{in} \PY{n}{single\PYZus{}occ\PYZus{}words}\PY{p}{:}
+        \PY{k}{for} \PY{n}{tup} \PY{o+ow}{in} \PY{n}{w\PYZus{}t\PYZus{}dev}\PY{p}{:}
+            \PY{k}{if} \PY{n}{tup}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{==} \PY{n}{word}\PY{p}{:}
+                \PY{n}{single\PYZus{}occ\PYZus{}word\PYZus{}tag}\PY{p}{[}\PY{n}{word}\PY{p}{]} \PY{o}{=} \PY{n}{tup}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}
+                \PY{n}{u}\PY{o}{+}\PY{o}{=}\PY{l+m+mi}{1}
+                \PY{k}{break}
+    
+    \PY{n}{tag\PYZus{}occ\PYZus{}singleoccWord}\PY{o}{=}\PY{n}{Counter}\PY{p}{(}\PY{n}{single\PYZus{}occ\PYZus{}word\PYZus{}tag}\PY{o}{.}\PY{n}{values}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+    \PY{k}{return} \PY{n}{tag\PYZus{}occ\PYZus{}singleoccWord}\PY{p}{,} \PY{n}{single\PYZus{}occ\PYZus{}words}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Attraverso Counter effettuo il conteggio delle occorenze delle coppie
+(parola, tag) per le tre strutture. Avremo, quindi, un oggetto Counter
+molto simile ad un dizionario: le coppie (parola, tag) come chiave e il
+relativo conteggio come valore.
+
+Per ogni tag viene calcolato, inoltre, il numero di volte che appare nel
+corpus del file train.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{computeOcc}\PY{p}{(}\PY{n}{w\PYZus{}t}\PY{p}{,} \PY{n}{w\PYZus{}s}\PY{p}{,} \PY{n}{w\PYZus{}e}\PY{p}{)}\PY{p}{:}
+    \PY{n}{w\PYZus{}t\PYZus{}occ} \PY{o}{=} \PY{n}{Counter}\PY{p}{(}\PY{n}{w\PYZus{}t}\PY{p}{)}
+    \PY{n}{w\PYZus{}s\PYZus{}occ} \PY{o}{=} \PY{n}{Counter}\PY{p}{(}\PY{n}{w\PYZus{}s}\PY{p}{)}
+    \PY{n}{w\PYZus{}e\PYZus{}occ} \PY{o}{=} \PY{n}{Counter}\PY{p}{(}\PY{n}{w\PYZus{}e}\PY{p}{)}
+
+    \PY{n}{t\PYZus{}occ} \PY{o}{=} \PY{n}{Counter}\PY{p}{(}\PY{p}{[}\PY{n}{i}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{w\PYZus{}t}\PY{p}{]}\PY{p}{)}
+    
+    \PY{k}{return} \PY{n}{w\PYZus{}t\PYZus{}occ}\PY{p}{,} \PY{n}{w\PYZus{}s\PYZus{}occ}\PY{p}{,} \PY{n}{w\PYZus{}e\PYZus{}occ}\PY{p}{,} \PY{n}{t\PYZus{}occ}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Probabilità di emissione: \[
+  p(w|t) = \frac{P(t,w)}{P(t)}.
+  \]
+
+Come accennato in precedenza useremo la funzione logaritmo per evitare
+eventuali underflow dovute a probabilità estremamente basse. \[
+  log(p(w|t))
+  \] La funzione logaritmo restituirà sempre un valore minore o uguale a
+0. Più l'evento è probabile e più il logaritmo è vicino allo zero. Nel
+caso che la probabilità fosse uguale a 0 e che la funzione logaritmo non
+sia applicabile a questo valore, si assegna alla probabilità un valore
+molto vicino allo zero (nel nostro caso 0.00001)
+
+Dopo una serie di sperimentazioni è stato scelto di applicare il valore
+assoluto alla funzione logaritmo in modo di lavorare sempre con valori
+positivi. \[
+  |log(p(w|t))|
+  \]
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{computeEmission}\PY{p}{(}\PY{n}{w\PYZus{}t\PYZus{}occ}\PY{p}{,} \PY{n}{t\PYZus{}occ}\PY{p}{)}\PY{p}{:}
+    \PY{n}{p\PYZus{}emission} \PY{o}{=} \PY{n+nb}{dict}\PY{p}{(}\PY{p}{)}
+    \PY{c+c1}{\PYZsh{} prob w given t}
+    \PY{k}{for} \PY{n}{key}\PY{p}{,} \PY{n}{value} \PY{o+ow}{in} \PY{n}{w\PYZus{}t\PYZus{}occ}\PY{o}{.}\PY{n}{items}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+        \PY{n}{prob} \PY{o}{=} \PY{n}{value} \PY{o}{/} \PY{n}{t\PYZus{}occ}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{n}{key}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+        \PY{k}{if} \PY{n}{prob} \PY{o}{==} \PY{l+m+mi}{0}\PY{p}{:}
+            \PY{n}{prob} \PY{o}{=} \PY{l+m+mf}{0.00001}
+        \PY{k}{if} \PY{n}{key}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{o+ow}{in} \PY{n}{p\PYZus{}emission}\PY{p}{:}
+            \PY{n}{p\PYZus{}emission}\PY{p}{[}\PY{n}{key}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{update}\PY{p}{(}\PY{p}{\PYZob{}}\PY{n}{key}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{:} \PY{n+nb}{abs}\PY{p}{(}\PY{n}{log}\PY{p}{(}\PY{n}{prob}\PY{p}{)}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{)}
+        \PY{k}{else}\PY{p}{:}
+            \PY{n}{p\PYZus{}emission}\PY{p}{[}\PY{n}{key}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{]} \PY{o}{=} \PY{p}{\PYZob{}}\PY{n}{key}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{:} \PY{n+nb}{abs}\PY{p}{(}\PY{n}{log}\PY{p}{(}\PY{n}{prob}\PY{p}{)}\PY{p}{)}\PY{p}{\PYZcb{}}
+    \PY{k}{return}  \PY{n}{p\PYZus{}emission}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Calcolo probabilità di emissione per le parole iniziali.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{computeEmissionInit}\PY{p}{(}\PY{n}{w\PYZus{}s\PYZus{}occ}\PY{p}{,} \PY{n}{t\PYZus{}occ}\PY{p}{)}\PY{p}{:}
+    \PY{n}{p\PYZus{}emission\PYZus{}init} \PY{o}{=} \PY{n+nb}{dict}\PY{p}{(}\PY{p}{)}
+    \PY{c+c1}{\PYZsh{}compute emission probability for initial state}
+    \PY{k}{for} \PY{n}{key}\PY{p}{,} \PY{n}{value} \PY{o+ow}{in} \PY{n}{w\PYZus{}s\PYZus{}occ}\PY{o}{.}\PY{n}{items}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+        \PY{n}{prob} \PY{o}{=} \PY{n}{value} \PY{o}{/} \PY{n}{t\PYZus{}occ}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{n}{key}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+        \PY{k}{if} \PY{n}{prob} \PY{o}{==} \PY{l+m+mi}{0}\PY{p}{:}
+            \PY{n}{prob} \PY{o}{=} \PY{l+m+mf}{0.00001}
+        \PY{k}{if} \PY{n}{key}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{o+ow}{in} \PY{n}{p\PYZus{}emission\PYZus{}init}\PY{p}{:}
+            \PY{n}{p\PYZus{}emission\PYZus{}init}\PY{p}{[}\PY{n}{key}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{update}\PY{p}{(}\PY{p}{\PYZob{}}\PY{n}{key}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{:} \PY{n+nb}{abs}\PY{p}{(}\PY{n}{log}\PY{p}{(}\PY{n}{prob}\PY{p}{)}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{)}
+        \PY{k}{else}\PY{p}{:}
+            \PY{n}{p\PYZus{}emission\PYZus{}init}\PY{p}{[}\PY{n}{key}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{]} \PY{o}{=} \PY{p}{\PYZob{}}\PY{n}{key}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{:} \PY{n+nb}{abs}\PY{p}{(}\PY{n}{log}\PY{p}{(}\PY{n}{prob}\PY{p}{)}\PY{p}{)}\PY{p}{\PYZcb{}}
+    \PY{k}{return} \PY{n}{p\PYZus{}emission\PYZus{}init}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Calcolo probabilità di emissione per le parole finali.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{computeEmissionEnd}\PY{p}{(}\PY{n}{w\PYZus{}e\PYZus{}occ}\PY{p}{,} \PY{n}{t\PYZus{}occ}\PY{p}{)}\PY{p}{:}
+    \PY{n}{p\PYZus{}emission\PYZus{}end} \PY{o}{=} \PY{n+nb}{dict}\PY{p}{(}\PY{p}{)}
+    \PY{c+c1}{\PYZsh{}compute emission probability for end state}
+    \PY{k}{for} \PY{n}{key}\PY{p}{,} \PY{n}{value} \PY{o+ow}{in} \PY{n}{w\PYZus{}e\PYZus{}occ}\PY{o}{.}\PY{n}{items}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+        \PY{n}{prob} \PY{o}{=} \PY{n}{value} \PY{o}{/} \PY{n}{t\PYZus{}occ}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{n}{key}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+        \PY{k}{if} \PY{n}{prob} \PY{o}{==} \PY{l+m+mi}{0}\PY{p}{:}
+            \PY{n}{prob} \PY{o}{=} \PY{l+m+mf}{0.00001}
+        \PY{k}{if} \PY{n}{key}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{o+ow}{in} \PY{n}{p\PYZus{}emission\PYZus{}end}\PY{p}{:} 
+            \PY{n}{p\PYZus{}emission\PYZus{}end}\PY{p}{[}\PY{n}{key}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{update}\PY{p}{(}\PY{p}{\PYZob{}}\PY{n}{key}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{:} \PY{n+nb}{abs}\PY{p}{(}\PY{n}{log}\PY{p}{(}\PY{n}{prob}\PY{p}{)}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{)}
+        \PY{k}{else}\PY{p}{:}
+            \PY{n}{p\PYZus{}emission\PYZus{}end}\PY{p}{[}\PY{n}{key}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{]} \PY{o}{=} \PY{p}{\PYZob{}}\PY{n}{key}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{:} \PY{n+nb}{abs}\PY{p}{(}\PY{n}{log}\PY{p}{(}\PY{n}{prob}\PY{p}{)}\PY{p}{)}\PY{p}{\PYZcb{}}
+    \PY{k}{return} \PY{n}{p\PYZus{}emission\PYZus{}end}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Probabilità di transizione: \[
+  p(t_1|t) = \frac{P(t,t_1)}{P(t)}.
+  \]
+
+Anche in questo caso consideremo il valore assoluto del logaritmo della
+probabilità: \[
+  |log(p(t_1|t))|
+  \]
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{computeTransition}\PY{p}{(}\PY{n}{w\PYZus{}t}\PY{p}{,} \PY{n}{t\PYZus{}occ}\PY{p}{)}\PY{p}{:}
+    \PY{n}{p\PYZus{}transition\PYZus{}dict} \PY{o}{=} \PY{n+nb}{dict}\PY{p}{(}\PY{p}{)}
+    \PY{c+c1}{\PYZsh{} prob t1 given t}
+    \PY{k}{for} \PY{n}{t1} \PY{o+ow}{in} \PY{n}{t\PYZus{}occ}\PY{o}{.}\PY{n}{keys}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+        \PY{k}{for} \PY{n}{t} \PY{o+ow}{in} \PY{n}{t\PYZus{}occ}\PY{o}{.}\PY{n}{keys}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+            \PY{n}{count} \PY{o}{=} \PY{l+m+mi}{0}
+            \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{w\PYZus{}t}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                \PY{k}{if} \PY{n}{w\PYZus{}t}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{==} \PY{n}{t1}\PY{p}{:}
+                    \PY{k}{if} \PY{n}{w\PYZus{}t}\PY{p}{[}\PY{n}{i} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{==} \PY{n}{t}\PY{p}{:}
+                        \PY{n}{count} \PY{o}{+}\PY{o}{=} \PY{l+m+mi}{1}
+            \PY{n}{prob} \PY{o}{=} \PY{n}{count} \PY{o}{/} \PY{n}{t\PYZus{}occ}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{n}{t}\PY{p}{)}
+            \PY{k}{if} \PY{n}{prob} \PY{o}{==} \PY{l+m+mi}{0}\PY{p}{:}
+                \PY{n}{prob} \PY{o}{=} \PY{l+m+mf}{0.00001}
+            \PY{k}{if} \PY{n}{t} \PY{o+ow}{in} \PY{n}{p\PYZus{}transition\PYZus{}dict}\PY{p}{:}
+                \PY{n}{p\PYZus{}transition\PYZus{}dict}\PY{p}{[}\PY{n}{t}\PY{p}{]}\PY{o}{.}\PY{n}{update}\PY{p}{(}\PY{p}{\PYZob{}}\PY{n}{t1}\PY{p}{:} \PY{n+nb}{abs}\PY{p}{(}\PY{n}{log}\PY{p}{(}\PY{n}{prob}\PY{p}{)}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{)}
+            \PY{k}{else}\PY{p}{:}
+                \PY{n}{p\PYZus{}transition\PYZus{}dict}\PY{p}{[}\PY{n}{t}\PY{p}{]} \PY{o}{=} \PY{p}{\PYZob{}}\PY{n}{t1}\PY{p}{:} \PY{n+nb}{abs}\PY{p}{(}\PY{n}{log}\PY{p}{(}\PY{n}{prob}\PY{p}{)}\PY{p}{)}\PY{p}{\PYZcb{}}
+    \PY{k}{return} \PY{n}{p\PYZus{}transition\PYZus{}dict}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Calcolo tutti i possibili states.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{getStates}\PY{p}{(}\PY{n}{p\PYZus{}transition\PYZus{}dict}\PY{p}{)}\PY{p}{:}
+    \PY{n}{i} \PY{o}{=} \PY{l+m+mi}{0}
+    \PY{n}{states} \PY{o}{=} \PY{n}{np\PYZus{}empty}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{p\PYZus{}transition\PYZus{}dict}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{l+m+mi}{2} \PY{p}{,} \PY{n}{dtype}\PY{o}{=}\PY{n+nb}{object}\PY{p}{)}
+    \PY{k}{for} \PY{n}{key} \PY{o+ow}{in} \PY{n}{t\PYZus{}occ}\PY{o}{.}\PY{n}{keys}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+        \PY{k}{if} \PY{n+nb}{str}\PY{p}{(}\PY{n}{key}\PY{p}{)} \PY{o}{!=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{INIT}\PY{l+s+s1}{\PYZsq{}} \PY{o+ow}{and} \PY{n+nb}{str}\PY{p}{(}\PY{n}{key}\PY{p}{)} \PY{o}{!=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{END}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}
+            \PY{n}{states}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{n+nb}{str}\PY{p}{(}\PY{n}{key}\PY{p}{)}
+            \PY{n}{i} \PY{o}{+}\PY{o}{=} \PY{l+m+mi}{1}
+    \PY{k}{return} \PY{n}{states}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Ottengo tutte le parole presenti nel corpus train.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{15}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{getCorpusWords}\PY{p}{(}\PY{n}{p\PYZus{}emission}\PY{p}{)}\PY{p}{:}
+    \PY{n}{all\PYZus{}words} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+    \PY{k}{for} \PY{n}{value} \PY{o+ow}{in} \PY{n}{p\PYZus{}emission}\PY{o}{.}\PY{n}{values}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+        \PY{n}{all\PYZus{}words}\PY{o}{.}\PY{n}{extend}\PY{p}{(}\PY{n+nb}{list}\PY{p}{(}\PY{n}{value}\PY{o}{.}\PY{n}{keys}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+    \PY{k}{return} \PY{n}{all\PYZus{}words}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Una volta popolata la lista contentente i PoS calcolati è possibile
+andare a calcolare l'accuratezza, PoS corretti ed errati.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{calculateAccuracy}\PY{p}{(}\PY{n}{all\PYZus{}pos}\PY{p}{,} \PY{n}{w\PYZus{}t\PYZus{}test}\PY{p}{)}\PY{p}{:}
+    \PY{n}{right\PYZus{}pos} \PY{o}{=} \PY{l+m+mi}{0}
+    \PY{n}{wrong\PYZus{}pos} \PY{o}{=} \PY{l+m+mi}{0}
+    \PY{n}{n} \PY{o}{=} \PY{l+m+mi}{0}
+
+    \PY{k}{for} \PY{n}{word} \PY{o+ow}{in} \PY{n}{all\PYZus{}pos}\PY{p}{:}
+        \PY{k}{if} \PY{p}{(}\PY{n}{word}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{==} \PY{n}{w\PYZus{}t\PYZus{}test}\PY{p}{[}\PY{n}{n}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{:}
+            \PY{n}{right\PYZus{}pos} \PY{o}{+}\PY{o}{=}\PY{l+m+mi}{1}
+        \PY{k}{else} \PY{p}{:}
+            \PY{n}{wrong\PYZus{}pos} \PY{o}{+}\PY{o}{=}\PY{l+m+mi}{1}
+        \PY{n}{n} \PY{o}{+}\PY{o}{=} \PY{l+m+mi}{1}
+
+    \PY{n}{accuracy} \PY{o}{=} \PY{n}{right\PYZus{}pos}\PY{o}{/}\PY{p}{(}\PY{n}{right\PYZus{}pos}\PY{o}{+}\PY{n}{wrong\PYZus{}pos}\PY{p}{)}
+
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Right PoS: }\PY{l+s+si}{\PYZpc{}s}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{n}{right\PYZus{}pos}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Wrong PoS: }\PY{l+s+si}{\PYZpc{}s}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{n}{wrong\PYZus{}pos}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Accuracy: }\PY{l+s+si}{\PYZpc{}s}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{n}{accuracy}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Controllo se le parole all'interno di \emph{all\_pos} e la lista
+\emph{w\_t\_test} combaciano esattamente (utile per debugging).
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{checkWrongWords}\PY{p}{(}\PY{n}{all\PYZus{}pos}\PY{p}{,} \PY{n}{w\PYZus{}t\PYZus{}test}\PY{p}{)}\PY{p}{:}
+    \PY{n}{same} \PY{o}{=} \PY{l+m+mi}{0}
+    \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{all\PYZus{}pos}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+        \PY{k}{if} \PY{n}{all\PYZus{}pos}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{==} \PY{n}{w\PYZus{}t\PYZus{}test}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{:}
+            \PY{n}{same}\PY{o}{+}\PY{o}{=}\PY{l+m+mi}{1}
+        \PY{k}{else}\PY{p}{:}
+            \PY{n+nb}{print}\PY{p}{(}\PY{n}{i}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    All'interno del corpus per la lingua latina sono presenti delle parole
+come \emph{``{[}adj{]}''} o \emph{``{[}--{]}''} che necessitano un
+trattamento diverso rispetto alle altre. Le funzioni \emph{.split()}
+oppure \emph{word\_tokenize} di nltk non sono in grado di ottenere il
+token corretto. Per esempio la singola parola \emph{``{[}--{]}''} viene
+suddivisa in \emph{``{[}"\emph{, }"--"* e *"{]}''}
+
+Ci sono possibili soluzioni:
+
+\begin{itemize}
+\tightlist
+\item
+  non considerarle perchè potrebbero essere degli errori o delle
+  annotazioni. Inoltre ne sono presenti in una percentuale veramente
+  ridotta considerando il numero totale di parole e che non ifluisce più
+  di tanto sull'inferenza
+\item
+  trovare una metodologia che forzi la corretta tokenizzazione
+\end{itemize}
+
+E' stato deciso di implementare una strategia che permetta la corretta
+tokenizzazione. La variabile a seguire specifica tutti i token da
+processare in modo diverso.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{token\PYZus{}to\PYZus{}merge} \PY{o}{=} \PY{p}{[}
+                 \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{adj}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Adj}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,}
+                 \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{adv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Adv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,}
+                 \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{aux}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Aux}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,}
+                 \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cconj}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Cconj}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,} 
+                 \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{det}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Det}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,}
+                 \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{init}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Init}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,}
+                 \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{noun}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Noun}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,}
+                 \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{num}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Num}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,}
+                 \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{part}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Part}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,}
+                 \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{pron}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Pron}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,}
+                 \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{propn}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Propn}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,}
+                 \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{punct}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Punct}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,}
+                 \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sconj}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sconj}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,}
+                 \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{verb}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Verb}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,}
+                 \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{X}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,}
+                 \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZhy{}\PYZhy{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,}
+                 \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{participle}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+                 \PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Creo una istanza di oggetto di MWETokenizer passando i token su cui non
+fare lo split.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{tokenizer} \PY{o}{=} \PY{n}{MWETokenizer}\PY{p}{(}\PY{n}{token\PYZus{}to\PYZus{}merge}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Metodo che consente di stampare la tabella di Viterbi (usato
+principalmente per debugging).
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{dptable}\PY{p}{(}\PY{n}{V}\PY{p}{)}\PY{p}{:}
+    \PY{k}{yield} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ }\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZpc{}10d}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{n}{i}\PY{p}{)} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{V}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+    \PY{k}{for} \PY{n}{y} \PY{o+ow}{in} \PY{n}{V}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{:}
+        \PY{k}{yield} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZpc{}.7s}\PY{l+s+s2}{: }\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{n}{y}\PY{o}{+}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ }\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZpc{}.7s}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZpc{}f}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{n}{v}\PY{p}{[}\PY{n}{y}\PY{p}{]}\PY{p}{)} \PY{k}{for} \PY{n}{v} \PY{o+ow}{in} \PY{n}{V}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{implementazione-metodo-di-viterbi}{%
+\subsection{Implementazione metodo di
+Viterbi}\label{implementazione-metodo-di-viterbi}}
+
+\hypertarget{hidden-markov-model-e-programmazione-dinamica.}{%
+\subsubsection{Hidden Markov Model e programmazione
+dinamica.}\label{hidden-markov-model-e-programmazione-dinamica.}}
+
+In input è necessario specificare la tecnica di smoothing:
+
+\begin{itemize}
+\tightlist
+\item
+  1: consideriamo tutte le parole sconosciute dei \emph{noun}\\
+  \[
+      P(unk|NOUN) =1
+  \]
+\item
+  2: consideriamo tutte le parole sconosciute dei \emph{noun} oppure dei
+  \emph{verb} con la stessa probabilità\\
+  \[
+      P(unk|NOUN) =0.5 \ and \ P(unk|VERB) = 0.5
+  \]
+\item
+  3: consideriamo le parole sconosciute con una probabilità che dipende
+  dal numero di states (numero di tag) \[
+      P(unk|t_i) = 1/(number \ of \ PoS \ Tags)
+  \]
+\item
+  4: tagghiamo le parole sconosciute secondo la distribuzione di parole
+  che appaiono una sola volta all'interno del \emph{dev corpus}
+  calcolata precedentemente. \[
+      P(unk|t_i) = (number \ of \ words \ appear \ one \ time \ tagged \ with \ t_i)/(number \ of \ words \ appear \ one \ time)
+  \]
+\end{itemize}
+
+In output avremo la lista \emph{all\_pos} contentente tutte le coppie
+(parola, tag) frutto delle computazioni.
+
+Il primo for effettua un ciclo su tutte le frasi in input prese dal
+corpus test. Dopodichè si procede nel parsing della frase attraverso il
+MWETokenizer istanziato precedentemente e che risolverà i problemi
+relativi allo splitting di parole che in realtà non andrebbero divise.
+
+Possiamo ora iniziare con il cosidetto \textbf{\emph{Inizialization
+step}}: il secondo for che vediamo in questo metodo si occupa di
+inizializzare la matrice di Viterbi (in questo caso chiamata backtrace)
+con le probabilità di transizione da \emph{INIT} allo stato i-esimo
+moltiplicata per la probabilità che quella parola sia iniziale. Nel caso
+non si abbia mai visto quella parola come la prima di una frase allora
+si moltiplica per un valore abbastanza alto (20).
+
+Da quest'ultima operazione possiamo iniziare a capire che, a differenza
+dell'algoritmo di Viterbi classico il quale punta nel massimizzare il
+risultato del prodotto tra probabilità di transizione e di emissione,
+l'obiettivo ora è minimizzare. Ricordiamo che tutti i valori di
+probabilità sono stati applicati alla funzione logaritmo e
+successivamente alla funzione valore assoluto. Così facendo avremo
+valori alti nel caso di probabilità basse. Perciò il nome delle
+variabili potrebbe trarre in inganno: non parliamo di probabilità ma di
+valori alti in caso di probabilità tendendi allo 0 e di valori bassi per
+probabilità tendenti a 1.
+
+Passiamo ora al \textbf{\emph{recursion step}}: consideriamo ora dalla
+seconda parola fino all'ultima. Effettuiamo un ultimo passo di
+processing della stringa andando a togliere eventuali *"\_"* dalle
+parole dovuto all'esecuzione di MWETokenizer. Anche in questo caso
+cicliamo su ogni stato e andiamo a popolare la matrice di viterbi
+andando a considerare il \textbf{\emph{minimo}} prodotto tra la matrice
+di viterbi del livello precedente e la probabilità di transizione ed
+emissione. Se la parola attualmente in esame è sconosciuta allora
+procediamo nell'esecuzione di una tecnica di smoothing. Invece, se una
+parola è conosciuta, ma non è mai stata taggata con un particolare tag
+(scopo del except KeyError) allora andremo ad moltiplicare per un valore
+alto (50).
+
+Il \textbf{\emph{termination step}} si occupa di scegliere un tag per
+l'ultima parola della frase minimizzando il prodotto tra la matrice al
+livello precendete, la probabilità di transizione dallo stato attuale
+allo stato finale e la probabilità che quella parola sia finale.
+
+Effettuato il \textbf{\emph{termination step}}, grazie alla matrice che
+abbiamo costruito nei passi precedenti, possiamo calcolare i PoS più
+probabili.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{21}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{ViterbiHMM}\PY{p}{(}\PY{n}{p\PYZus{}emission}\PY{p}{,} \PY{n}{p\PYZus{}emission\PYZus{}init}\PY{p}{,} \PY{n}{p\PYZus{}transition}\PY{p}{,} \PY{n}{query\PYZus{}list}\PY{p}{,} \PY{n}{smoothing\PYZus{}mode}\PY{p}{,} \PY{n}{tag\PYZus{}occ\PYZus{}singleoccWord} \PY{o}{=} \PY{k+kc}{None}\PY{p}{,} \PY{n}{single\PYZus{}occ\PYZus{}words} \PY{o}{=} \PY{k+kc}{None}\PY{p}{)}\PY{p}{:}
+    \PY{n}{all\PYZus{}pos} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+    \PY{k}{for} \PY{n}{query} \PY{o+ow}{in} \PY{n}{query\PYZus{}list}\PY{p}{:}
+            
+        \PY{n}{input\PYZus{}splitted} \PY{o}{=} \PY{n}{tokenizer}\PY{o}{.}\PY{n}{tokenize}\PY{p}{(}\PY{n}{word\PYZus{}tokenize}\PY{p}{(}\PY{n}{query}\PY{p}{)}\PY{p}{)}
+        \PY{n}{T} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{input\PYZus{}splitted}\PY{p}{)}
+        
+        \PY{c+c1}{\PYZsh{} Tracking tables from first observation (Inizialization step)}
+        \PY{n}{backtrace}\PY{o}{=}\PY{p}{[}\PY{p}{\PYZob{}}\PY{p}{\PYZcb{}}\PY{p}{]}
+        \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{states}\PY{p}{:}
+            \PY{k}{try}\PY{p}{:}
+                \PY{n}{backtrace}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{=}\PY{n}{p\PYZus{}transition}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{INIT}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{*}\PY{n}{p\PYZus{}emission\PYZus{}init}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{INIT}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{n}{input\PYZus{}splitted}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{]}
+            \PY{k}{except} \PY{n+ne}{KeyError}\PY{p}{:}
+                \PY{n}{backtrace}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{=}\PY{n}{p\PYZus{}transition}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{INIT}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{*} \PY{l+m+mi}{20}
+        
+        
+        \PY{k}{for} \PY{n}{t} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{T}\PY{p}{)}\PY{p}{:}
+            \PY{n}{input\PYZus{}splitted}\PY{p}{[}\PY{n}{t}\PY{p}{]} \PY{o}{=} \PY{n}{input\PYZus{}splitted}\PY{p}{[}\PY{n}{t}\PY{p}{]}\PY{o}{.}\PY{n}{replace}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+            \PY{n}{backtrace}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{\PYZob{}}\PY{p}{\PYZcb{}}\PY{p}{)}
+            \PY{k}{for} \PY{n}{y} \PY{o+ow}{in} \PY{n}{states}\PY{p}{:}
+                \PY{c+c1}{\PYZsh{}Termination step}
+                \PY{k}{if} \PY{n}{t} \PY{o}{==} \PY{n}{T} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{:}
+                    \PY{k}{try}\PY{p}{:}
+                        \PY{p}{(}\PY{n}{prob}\PY{p}{,} \PY{n}{state}\PY{p}{)} \PY{o}{=} \PY{n+nb}{min}\PY{p}{(}\PY{p}{(}\PY{n}{backtrace}\PY{p}{[}\PY{n}{t}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{n}{y0}\PY{p}{]} \PY{o}{*} \PY{n}{p\PYZus{}transition}\PY{p}{[}\PY{n}{y0}\PY{p}{]}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{END}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{*} \PY{n}{p\PYZus{}emission}\PY{p}{[}\PY{n}{y}\PY{p}{]}\PY{p}{[}\PY{n}{input\PYZus{}splitted}\PY{p}{[}\PY{n}{t}\PY{p}{]}\PY{p}{]}\PY{p}{,} \PY{n}{y0}\PY{p}{)} \PY{k}{for} \PY{n}{y0} \PY{o+ow}{in} \PY{n}{states}\PY{p}{)}
+                    \PY{k}{except} \PY{n+ne}{KeyError}\PY{p}{:}
+                        \PY{p}{(}\PY{n}{prob}\PY{p}{,} \PY{n}{state}\PY{p}{)} \PY{o}{=} \PY{n+nb}{min}\PY{p}{(}\PY{p}{(}\PY{n}{backtrace}\PY{p}{[}\PY{n}{t}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{n}{y0}\PY{p}{]} \PY{o}{*} \PY{n}{p\PYZus{}transition}\PY{p}{[}\PY{n}{y0}\PY{p}{]}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{END}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{*} \PY{l+m+mi}{50}\PY{p}{,} \PY{n}{y0}\PY{p}{)} \PY{k}{for} \PY{n}{y0} \PY{o+ow}{in} \PY{n}{states}\PY{p}{)}
+                \PY{k}{else}\PY{p}{:} 
+                    \PY{k}{if} \PY{n}{input\PYZus{}splitted}\PY{p}{[}\PY{n}{t}\PY{p}{]} \PY{o+ow}{not} \PY{o+ow}{in} \PY{n}{all\PYZus{}words}\PY{p}{:}
+                        
+                        \PY{k}{if} \PY{n}{smoothing\PYZus{}mode} \PY{o}{==} \PY{l+m+mi}{1}\PY{p}{:} 
+                            \PY{c+c1}{\PYZsh{} P(unk|NOUN) =1}
+                            \PY{k}{if} \PY{n}{y} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{noun}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}
+                                \PY{p}{(}\PY{n}{prob}\PY{p}{,} \PY{n}{state}\PY{p}{)} \PY{o}{=} \PY{n+nb}{min}\PY{p}{(}\PY{p}{(}\PY{n}{backtrace}\PY{p}{[}\PY{n}{t}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{n}{y0}\PY{p}{]} \PY{o}{*} \PY{n}{p\PYZus{}transition}\PY{p}{[}\PY{n}{y0}\PY{p}{]}\PY{p}{[}\PY{n}{y}\PY{p}{]} \PY{o}{*} \PY{l+m+mf}{0.0001} \PY{p}{,} \PY{n}{y0}\PY{p}{)} \PY{k}{for} \PY{n}{y0} \PY{o+ow}{in} \PY{n}{states}\PY{p}{)}
+                            \PY{k}{else}\PY{p}{:}
+                                \PY{p}{(}\PY{n}{prob}\PY{p}{,} \PY{n}{state}\PY{p}{)} \PY{o}{=} \PY{n+nb}{min}\PY{p}{(}\PY{p}{(}\PY{n}{backtrace}\PY{p}{[}\PY{n}{t}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{n}{y0}\PY{p}{]} \PY{o}{*} \PY{n}{p\PYZus{}transition}\PY{p}{[}\PY{n}{y0}\PY{p}{]}\PY{p}{[}\PY{n}{y}\PY{p}{]} \PY{o}{*} \PY{l+m+mi}{50}\PY{p}{,} \PY{n}{y0}\PY{p}{)} \PY{k}{for} \PY{n}{y0} \PY{o+ow}{in} \PY{n}{states}\PY{p}{)}
+                                
+                        \PY{k}{elif} \PY{n}{smoothing\PYZus{}mode} \PY{o}{==} \PY{l+m+mi}{2}\PY{p}{:}
+                            \PY{c+c1}{\PYZsh{} P(unk|NOUN) =0.5 and P(unk|VERB) = 0.5}
+                            \PY{k}{if} \PY{n}{y} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{noun}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}
+                                 \PY{p}{(}\PY{n}{prob}\PY{p}{,} \PY{n}{state}\PY{p}{)} \PY{o}{=} \PY{n+nb}{min}\PY{p}{(}\PY{p}{(}\PY{n}{backtrace}\PY{p}{[}\PY{n}{t}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{n}{y0}\PY{p}{]} \PY{o}{*} \PY{n}{p\PYZus{}transition}\PY{p}{[}\PY{n}{y0}\PY{p}{]}\PY{p}{[}\PY{n}{y}\PY{p}{]} \PY{o}{*} \PY{n+nb}{abs}\PY{p}{(}\PY{n}{log}\PY{p}{(}\PY{l+m+mf}{0.5}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{n}{y0}\PY{p}{)} \PY{k}{for} \PY{n}{y0} \PY{o+ow}{in} \PY{n}{states}\PY{p}{)}
+                            \PY{k}{elif} \PY{n}{y} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{verb}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}
+                                 \PY{p}{(}\PY{n}{prob}\PY{p}{,} \PY{n}{state}\PY{p}{)} \PY{o}{=} \PY{n+nb}{min}\PY{p}{(}\PY{p}{(}\PY{n}{backtrace}\PY{p}{[}\PY{n}{t}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{n}{y0}\PY{p}{]} \PY{o}{*} \PY{n}{p\PYZus{}transition}\PY{p}{[}\PY{n}{y0}\PY{p}{]}\PY{p}{[}\PY{n}{y}\PY{p}{]} \PY{o}{*} \PY{n+nb}{abs}\PY{p}{(}\PY{n}{log}\PY{p}{(}\PY{l+m+mf}{0.5}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{n}{y0}\PY{p}{)} \PY{k}{for} \PY{n}{y0} \PY{o+ow}{in} \PY{n}{states}\PY{p}{)}
+                            \PY{k}{else}\PY{p}{:}
+                                \PY{p}{(}\PY{n}{prob}\PY{p}{,} \PY{n}{state}\PY{p}{)} \PY{o}{=} \PY{n+nb}{min}\PY{p}{(}\PY{p}{(}\PY{n}{backtrace}\PY{p}{[}\PY{n}{t}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{n}{y0}\PY{p}{]} \PY{o}{*} \PY{n}{p\PYZus{}transition}\PY{p}{[}\PY{n}{y0}\PY{p}{]}\PY{p}{[}\PY{n}{y}\PY{p}{]} \PY{o}{*} \PY{l+m+mi}{50}\PY{p}{,} \PY{n}{y0}\PY{p}{)} \PY{k}{for} \PY{n}{y0} \PY{o+ow}{in} \PY{n}{states}\PY{p}{)}
+                                
+                        \PY{k}{elif} \PY{n}{smoothing\PYZus{}mode} \PY{o}{==} \PY{l+m+mi}{3}\PY{p}{:}
+                            \PY{c+c1}{\PYZsh{}P(unk|ti) = 1/\PYZsh{}(PoS\PYZus{}TAGs)}
+                            \PY{p}{(}\PY{n}{prob}\PY{p}{,} \PY{n}{state}\PY{p}{)} \PY{o}{=} \PY{n+nb}{min}\PY{p}{(}\PY{p}{(}\PY{n}{backtrace}\PY{p}{[}\PY{n}{t}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{n}{y0}\PY{p}{]} \PY{o}{*} \PY{n}{p\PYZus{}transition}\PY{p}{[}\PY{n}{y0}\PY{p}{]}\PY{p}{[}\PY{n}{y}\PY{p}{]} \PY{o}{*} \PY{n+nb}{abs}\PY{p}{(}\PY{n}{log}\PY{p}{(}\PY{l+m+mi}{1} \PY{o}{/} \PY{n+nb}{len}\PY{p}{(}\PY{n}{states}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{n}{y0}\PY{p}{)} \PY{k}{for} \PY{n}{y0} \PY{o+ow}{in} \PY{n}{states}\PY{p}{)}
+                            
+                        \PY{k}{elif} \PY{n}{smoothing\PYZus{}mode} \PY{o}{==} \PY{l+m+mi}{4}\PY{p}{:}
+                            \PY{c+c1}{\PYZsh{}Another smoothing technique based on the dev file and words which appear one time}
+                            \PY{k}{for} \PY{n}{tag} \PY{o+ow}{in} \PY{n}{states}\PY{p}{:}
+                                \PY{k}{if} \PY{n}{y} \PY{o}{==} \PY{n}{tag}\PY{p}{:}
+                                    \PY{k}{try}\PY{p}{:}
+                                        \PY{n}{p\PYZus{}emission\PYZus{}new\PYZus{}word} \PY{o}{=} \PY{n+nb}{abs}\PY{p}{(}\PY{n}{log}\PY{p}{(}\PY{n}{tag\PYZus{}occ\PYZus{}singleoccWord}\PY{p}{[}\PY{n}{tag}\PY{p}{]} \PY{o}{/} \PY{n+nb}{len}\PY{p}{(}\PY{n}{single\PYZus{}occ\PYZus{}words}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+                                    \PY{k}{except} \PY{n+ne}{ValueError}\PY{p}{:}
+                                        \PY{n}{p\PYZus{}emission\PYZus{}new\PYZus{}word} \PY{o}{=}  \PY{l+m+mi}{50}
+                                    \PY{p}{(}\PY{n}{prob}\PY{p}{,} \PY{n}{state}\PY{p}{)} \PY{o}{=} \PY{n+nb}{min}\PY{p}{(}\PY{p}{(}\PY{n}{backtrace}\PY{p}{[}\PY{n}{t}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{n}{y0}\PY{p}{]} \PY{o}{*} \PY{n}{p\PYZus{}transition}\PY{p}{[}\PY{n}{y0}\PY{p}{]}\PY{p}{[}\PY{n}{y}\PY{p}{]} \PY{o}{*} \PY{n}{p\PYZus{}emission\PYZus{}new\PYZus{}word}\PY{p}{,} \PY{n}{y0}\PY{p}{)} \PY{k}{for} \PY{n}{y0} \PY{o+ow}{in} \PY{n}{states}\PY{p}{)}
+                                    \PY{k}{break}
+                        \PY{k}{else} \PY{p}{:}
+                            \PY{k}{return}
+                    \PY{k}{else}\PY{p}{:} 
+                        \PY{k}{try}\PY{p}{:}
+                            \PY{p}{(}\PY{n}{prob}\PY{p}{,} \PY{n}{state}\PY{p}{)} \PY{o}{=} \PY{n+nb}{min}\PY{p}{(}\PY{p}{(}\PY{n}{backtrace}\PY{p}{[}\PY{n}{t}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{n}{y0}\PY{p}{]} \PY{o}{*} \PY{n}{p\PYZus{}transition}\PY{p}{[}\PY{n}{y0}\PY{p}{]}\PY{p}{[}\PY{n}{y}\PY{p}{]} \PY{o}{*} \PY{n}{p\PYZus{}emission}\PY{p}{[}\PY{n}{y}\PY{p}{]}\PY{p}{[}\PY{n}{input\PYZus{}splitted}\PY{p}{[}\PY{n}{t}\PY{p}{]}\PY{p}{]}\PY{p}{,} \PY{n}{y0}\PY{p}{)} \PY{k}{for} \PY{n}{y0} \PY{o+ow}{in} \PY{n}{states}\PY{p}{)}
+                        \PY{k}{except} \PY{n+ne}{KeyError}\PY{p}{:}
+                            \PY{p}{(}\PY{n}{prob}\PY{p}{,} \PY{n}{state}\PY{p}{)} \PY{o}{=} \PY{n+nb}{min}\PY{p}{(}\PY{p}{(}\PY{n}{backtrace}\PY{p}{[}\PY{n}{t}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{n}{y0}\PY{p}{]} \PY{o}{*} \PY{n}{p\PYZus{}transition}\PY{p}{[}\PY{n}{y0}\PY{p}{]}\PY{p}{[}\PY{n}{y}\PY{p}{]} \PY{o}{*} \PY{l+m+mi}{50}\PY{p}{,} \PY{n}{y0}\PY{p}{)} \PY{k}{for} \PY{n}{y0} \PY{o+ow}{in} \PY{n}{states}\PY{p}{)}
+                \PY{n}{backtrace}\PY{p}{[}\PY{n}{t}\PY{p}{]}\PY{p}{[}\PY{n}{y}\PY{p}{]} \PY{o}{=} \PY{n}{prob}
+            \PY{c+c1}{\PYZsh{}for i in dptable(viterbi):}
+            \PY{c+c1}{\PYZsh{}   print (i)}
+            \PY{n}{opt}\PY{o}{=}\PY{p}{[}\PY{p}{]}
+            \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n}{backtrace}\PY{p}{:}
+                \PY{k}{for} \PY{n}{x}\PY{p}{,}\PY{n}{y} \PY{o+ow}{in} \PY{n}{j}\PY{o}{.}\PY{n}{items}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+                    \PY{k}{if} \PY{n}{j}\PY{p}{[}\PY{n}{x}\PY{p}{]}\PY{o}{==}\PY{n+nb}{min}\PY{p}{(}\PY{n}{j}\PY{o}{.}\PY{n}{values}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                        \PY{n}{opt}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{x}\PY{p}{)}
+        \PY{c+c1}{\PYZsh{} print (\PYZsq{}The PoS are\PYZbs{}n\PYZsq{}+\PYZsq{}\PYZsq{}}
+        \PY{c+c1}{\PYZsh{}       .join(map(\PYZsq{}\PYZsq{}.join, zip([x + \PYZsq{}/\PYZsq{} for x in input\PYZus{}splitted], [x + \PYZsq{}\PYZbs{}n\PYZsq{} for x in opt]))))}
+        \PY{k}{for} \PY{n}{l} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{n}{T}\PY{p}{)}\PY{p}{:}
+            \PY{n}{all\PYZus{}pos}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{[}\PY{n}{input\PYZus{}splitted}\PY{p}{[}\PY{n}{l}\PY{p}{]}\PY{o}{.}\PY{n}{replace}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,} \PY{n}{opt}\PY{p}{[}\PY{n}{l}\PY{p}{]}\PY{p}{]}\PY{p}{)}
+    \PY{k}{return} \PY{n}{all\PYZus{}pos}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{implementazione-baseline}{%
+\subsubsection{Implementazione
+baseline}\label{implementazione-baseline}}
+
+Semplice algoritmo basato sul numero di volte che una certa parola,
+all'interno del train set, appare con un determinato tag. Assegno alle
+parola in ingresso il tag con cui essa appare più volte all'interno del
+\emph{train}.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{22}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{Baseline}\PY{p}{(}\PY{n}{w\PYZus{}t\PYZus{}occ}\PY{p}{,} \PY{n}{query\PYZus{}list}\PY{p}{)}\PY{p}{:}
+    \PY{n}{all\PYZus{}pos}\PY{o}{=}\PY{p}{[}\PY{p}{]}
+    \PY{k}{for} \PY{n}{query} \PY{o+ow}{in} \PY{n}{query\PYZus{}list}\PY{p}{:}
+        \PY{n}{input\PYZus{}splitted} \PY{o}{=} \PY{n}{tokenizer}\PY{o}{.}\PY{n}{tokenize}\PY{p}{(}\PY{n}{word\PYZus{}tokenize}\PY{p}{(}\PY{n}{query}\PY{p}{)}\PY{p}{)}
+        \PY{n}{T} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{input\PYZus{}splitted}\PY{p}{)}
+        \PY{n}{tag\PYZus{}target} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{noun}\PY{l+s+s1}{\PYZsq{}}
+        \PY{k}{for} \PY{n}{t} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{T}\PY{p}{)}\PY{p}{:}
+            \PY{n+nb}{max} \PY{o}{=} \PY{l+m+mi}{0}
+            \PY{k}{for} \PY{n}{key}\PY{p}{,} \PY{n}{value} \PY{o+ow}{in} \PY{n}{w\PYZus{}t\PYZus{}occ}\PY{o}{.}\PY{n}{items}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+                \PY{k}{if} \PY{n}{key}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{==}\PY{n}{input\PYZus{}splitted}\PY{p}{[}\PY{n}{t}\PY{p}{]}\PY{o}{.}\PY{n}{replace}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{:}
+                    \PY{k}{if} \PY{n+nb}{max} \PY{o}{\PYZlt{}} \PY{n}{value}\PY{p}{:}
+                        \PY{n+nb}{max} \PY{o}{=} \PY{n}{value}
+                        \PY{n}{tag\PYZus{}target} \PY{o}{=} \PY{n}{key}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}
+            \PY{n}{all\PYZus{}pos}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{[}\PY{n}{input\PYZus{}splitted}\PY{p}{[}\PY{n}{t}\PY{p}{]}\PY{o}{.}\PY{n}{replace}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,} \PY{n}{tag\PYZus{}target}\PY{p}{]}\PY{p}{)}
+    \PY{k}{return} \PY{n}{all\PYZus{}pos}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{latino}{%
+\subsection{Latino}\label{latino}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{23}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{w\PYZus{}t}\PY{p}{,} \PY{n}{w\PYZus{}e}\PY{p}{,} \PY{n}{w\PYZus{}s} \PY{o}{=} \PY{n}{trainParsing}\PY{p}{(}\PY{n}{latin\PYZus{}train\PYZus{}tree\PYZus{}bank}\PY{p}{)}
+\PY{n}{w\PYZus{}t\PYZus{}dev} \PY{o}{=} \PY{n}{devParsing}\PY{p}{(}\PY{n}{latin\PYZus{}dev\PYZus{}tree\PYZus{}bank}\PY{p}{)}
+\PY{n}{w\PYZus{}t\PYZus{}test}\PY{p}{,} \PY{n}{query\PYZus{}list} \PY{o}{=} \PY{n}{testParsing}\PY{p}{(}\PY{n}{latin\PYZus{}test\PYZus{}tree\PYZus{}bank}\PY{p}{)}
+
+\PY{n}{tag\PYZus{}occ\PYZus{}singleoccWord}\PY{p}{,} \PY{n}{single\PYZus{}occ\PYZus{}words} \PY{o}{=} \PY{n}{singleWordDistribution}\PY{p}{(}\PY{n}{w\PYZus{}t\PYZus{}dev}\PY{p}{)}
+
+\PY{n}{w\PYZus{}t\PYZus{}occ}\PY{p}{,} \PY{n}{w\PYZus{}s\PYZus{}occ}\PY{p}{,} \PY{n}{w\PYZus{}e\PYZus{}occ}\PY{p}{,} \PY{n}{t\PYZus{}occ} \PY{o}{=} \PY{n}{computeOcc}\PY{p}{(}\PY{n}{w\PYZus{}t}\PY{p}{,} \PY{n}{w\PYZus{}s}\PY{p}{,} \PY{n}{w\PYZus{}e}\PY{p}{)}
+
+\PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{p\PYZus{}emission} \PY{o}{=} \PY{n}{computeEmission}\PY{p}{(}\PY{n}{w\PYZus{}t\PYZus{}occ}\PY{p}{,} \PY{n}{t\PYZus{}occ}\PY{p}{)}
+\PY{n}{p\PYZus{}emission\PYZus{}init} \PY{o}{=} \PY{n}{computeEmissionInit}\PY{p}{(}\PY{n}{w\PYZus{}s\PYZus{}occ}\PY{p}{,} \PY{n}{t\PYZus{}occ}\PY{p}{)}
+\PY{n}{p\PYZus{}emission\PYZus{}end} \PY{o}{=} \PY{n}{computeEmissionEnd}\PY{p}{(}\PY{n}{w\PYZus{}e\PYZus{}occ}\PY{p}{,} \PY{n}{t\PYZus{}occ}\PY{p}{)}
+    
+\PY{n}{p\PYZus{}transition} \PY{o}{=} \PY{n}{computeTransition}\PY{p}{(}\PY{n}{w\PYZus{}t}\PY{p}{,} \PY{n}{t\PYZus{}occ}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{} }\PY{l+s+si}{\PYZpc{}s}\PY{l+s+s2}{ seconds (Calculate probability \PYZhy{} latin) \PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{n+nb}{round}\PY{p}{(}\PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{start\PYZus{}time}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}
+
+\PY{n}{all\PYZus{}words} \PY{o}{=} \PY{n}{getCorpusWords}\PY{p}{(}\PY{n}{p\PYZus{}emission}\PY{p}{)}
+\PY{n}{states} \PY{o}{=} \PY{n}{getStates}\PY{p}{(}\PY{n}{p\PYZus{}transition}\PY{p}{)}
+
+\PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{all\PYZus{}pos} \PY{o}{=} \PY{n}{ViterbiHMM}\PY{p}{(}\PY{n}{p\PYZus{}emission}\PY{p}{,} \PY{n}{p\PYZus{}emission\PYZus{}init}\PY{p}{,} \PY{n}{p\PYZus{}transition}\PY{p}{,} \PY{n}{query\PYZus{}list}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{} }\PY{l+s+si}{\PYZpc{}s}\PY{l+s+s2}{ seconds (Viterbi, 1st smoothing \PYZhy{} latin) \PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{n+nb}{round}\PY{p}{(}\PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{start\PYZus{}time}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}
+\PY{n}{calculateAccuracy}\PY{p}{(}\PY{n}{all\PYZus{}pos}\PY{p}{,} \PY{n}{w\PYZus{}t\PYZus{}test}\PY{p}{)}
+
+\PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{all\PYZus{}pos} \PY{o}{=} \PY{n}{ViterbiHMM}\PY{p}{(}\PY{n}{p\PYZus{}emission}\PY{p}{,} \PY{n}{p\PYZus{}emission\PYZus{}init}\PY{p}{,} \PY{n}{p\PYZus{}transition}\PY{p}{,} \PY{n}{query\PYZus{}list}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{} }\PY{l+s+si}{\PYZpc{}s}\PY{l+s+s2}{ seconds (Viterbi, 2nd smoothing \PYZhy{} latin) \PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{n+nb}{round}\PY{p}{(}\PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{start\PYZus{}time}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}
+\PY{n}{calculateAccuracy}\PY{p}{(}\PY{n}{all\PYZus{}pos}\PY{p}{,} \PY{n}{w\PYZus{}t\PYZus{}test}\PY{p}{)}
+
+\PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{all\PYZus{}pos} \PY{o}{=} \PY{n}{ViterbiHMM}\PY{p}{(}\PY{n}{p\PYZus{}emission}\PY{p}{,} \PY{n}{p\PYZus{}emission\PYZus{}init}\PY{p}{,} \PY{n}{p\PYZus{}transition}\PY{p}{,} \PY{n}{query\PYZus{}list}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{} }\PY{l+s+si}{\PYZpc{}s}\PY{l+s+s2}{ seconds (Viterbi, 3th smoothing \PYZhy{} latin) \PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{n+nb}{round}\PY{p}{(}\PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{start\PYZus{}time}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}
+\PY{n}{calculateAccuracy}\PY{p}{(}\PY{n}{all\PYZus{}pos}\PY{p}{,} \PY{n}{w\PYZus{}t\PYZus{}test}\PY{p}{)}
+
+\PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{all\PYZus{}pos} \PY{o}{=} \PY{n}{ViterbiHMM}\PY{p}{(}\PY{n}{p\PYZus{}emission}\PY{p}{,} \PY{n}{p\PYZus{}emission\PYZus{}init}\PY{p}{,} \PY{n}{p\PYZus{}transition}\PY{p}{,} \PY{n}{query\PYZus{}list}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{,} \PY{n}{tag\PYZus{}occ\PYZus{}singleoccWord} \PY{o}{=} \PY{n}{tag\PYZus{}occ\PYZus{}singleoccWord}\PY{p}{,} \PY{n}{single\PYZus{}occ\PYZus{}words} \PY{o}{=} \PY{n}{single\PYZus{}occ\PYZus{}words}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{} }\PY{l+s+si}{\PYZpc{}s}\PY{l+s+s2}{ seconds (Viterbi, 4th smoothing \PYZhy{} latin) \PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{n+nb}{round}\PY{p}{(}\PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{start\PYZus{}time}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}
+\PY{n}{calculateAccuracy}\PY{p}{(}\PY{n}{all\PYZus{}pos}\PY{p}{,} \PY{n}{w\PYZus{}t\PYZus{}test}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+--- 4.02 seconds (Calculate probability - latin) ---
+--- 31.06 seconds (Viterbi, 1st smoothing - latin) ---
+Right PoS: 22353
+Wrong PoS: 1726
+Accuracy: 0.9283192823622244
+--- 30.97 seconds (Viterbi, 2nd smoothing - latin) ---
+Right PoS: 22393
+Wrong PoS: 1686
+Accuracy: 0.9299804809169816
+--- 31.19 seconds (Viterbi, 3th smoothing - latin) ---
+Right PoS: 22436
+Wrong PoS: 1643
+Accuracy: 0.9317662693633456
+--- 31.11 seconds (Viterbi, 4th smoothing - latin) ---
+Right PoS: 22676
+Wrong PoS: 1403
+Accuracy: 0.9417334606918892
+    \end{Verbatim}
+
+    Analogamente a quanto fatto con Viterbi, analizzo i tempi di esecuzione
+della baseline.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{24}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{all\PYZus{}pos} \PY{o}{=} \PY{n}{Baseline}\PY{p}{(}\PY{n}{w\PYZus{}t\PYZus{}occ}\PY{p}{,} \PY{n}{query\PYZus{}list}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{} }\PY{l+s+si}{\PYZpc{}s}\PY{l+s+s2}{ seconds (Baseline \PYZhy{} latin) \PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{n+nb}{round}\PY{p}{(}\PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{start\PYZus{}time}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}
+\PY{n}{calculateAccuracy}\PY{p}{(}\PY{n}{all\PYZus{}pos}\PY{p}{,} \PY{n}{w\PYZus{}t\PYZus{}test}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+--- 32.59 seconds (Baseline - latin) ---
+Right PoS: 22869
+Wrong PoS: 1210
+Accuracy: 0.949748743718593
+    \end{Verbatim}
+
+    \hypertarget{greco}{%
+\subsection{Greco}\label{greco}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{25}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{w\PYZus{}t}\PY{p}{,} \PY{n}{w\PYZus{}e}\PY{p}{,} \PY{n}{w\PYZus{}s} \PY{o}{=} \PY{n}{trainParsing}\PY{p}{(}\PY{n}{greek\PYZus{}train\PYZus{}tree\PYZus{}bank}\PY{p}{)}
+\PY{n}{w\PYZus{}t\PYZus{}dev} \PY{o}{=} \PY{n}{devParsing}\PY{p}{(}\PY{n}{greek\PYZus{}dev\PYZus{}tree\PYZus{}bank}\PY{p}{)}
+\PY{n}{w\PYZus{}t\PYZus{}test}\PY{p}{,} \PY{n}{query\PYZus{}list} \PY{o}{=} \PY{n}{testParsing}\PY{p}{(}\PY{n}{greek\PYZus{}test\PYZus{}tree\PYZus{}bank}\PY{p}{)}
+
+\PY{n}{tag\PYZus{}occ\PYZus{}singleoccWord}\PY{p}{,} \PY{n}{single\PYZus{}occ\PYZus{}words} \PY{o}{=} \PY{n}{singleWordDistribution}\PY{p}{(}\PY{n}{w\PYZus{}t\PYZus{}dev}\PY{p}{)}
+
+\PY{n}{w\PYZus{}t\PYZus{}occ}\PY{p}{,} \PY{n}{w\PYZus{}s\PYZus{}occ}\PY{p}{,} \PY{n}{w\PYZus{}e\PYZus{}occ}\PY{p}{,} \PY{n}{t\PYZus{}occ} \PY{o}{=} \PY{n}{computeOcc}\PY{p}{(}\PY{n}{w\PYZus{}t}\PY{p}{,} \PY{n}{w\PYZus{}s}\PY{p}{,} \PY{n}{w\PYZus{}e}\PY{p}{)}
+
+\PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+
+\PY{n}{p\PYZus{}emission} \PY{o}{=} \PY{n}{computeEmission}\PY{p}{(}\PY{n}{w\PYZus{}t\PYZus{}occ}\PY{p}{,} \PY{n}{t\PYZus{}occ}\PY{p}{)}
+\PY{n}{p\PYZus{}emission\PYZus{}init} \PY{o}{=} \PY{n}{computeEmissionInit}\PY{p}{(}\PY{n}{w\PYZus{}s\PYZus{}occ}\PY{p}{,} \PY{n}{t\PYZus{}occ}\PY{p}{)}
+\PY{n}{p\PYZus{}emission\PYZus{}end} \PY{o}{=} \PY{n}{computeEmissionEnd}\PY{p}{(}\PY{n}{w\PYZus{}e\PYZus{}occ}\PY{p}{,} \PY{n}{t\PYZus{}occ}\PY{p}{)}
+    
+\PY{n}{p\PYZus{}transition} \PY{o}{=} \PY{n}{computeTransition}\PY{p}{(}\PY{n}{w\PYZus{}t}\PY{p}{,} \PY{n}{t\PYZus{}occ}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{} }\PY{l+s+si}{\PYZpc{}s}\PY{l+s+s2}{ seconds (Calculate probability \PYZhy{} latin) \PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{n+nb}{round}\PY{p}{(}\PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{start\PYZus{}time}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}
+
+
+\PY{n}{all\PYZus{}words} \PY{o}{=} \PY{n}{getCorpusWords}\PY{p}{(}\PY{n}{p\PYZus{}emission}\PY{p}{)}
+\PY{n}{states} \PY{o}{=} \PY{n}{getStates}\PY{p}{(}\PY{n}{p\PYZus{}transition}\PY{p}{)}
+
+\PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{all\PYZus{}pos} \PY{o}{=} \PY{n}{ViterbiHMM}\PY{p}{(}\PY{n}{p\PYZus{}emission}\PY{p}{,} \PY{n}{p\PYZus{}emission\PYZus{}init}\PY{p}{,} \PY{n}{p\PYZus{}transition}\PY{p}{,} \PY{n}{query\PYZus{}list}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{} }\PY{l+s+si}{\PYZpc{}s}\PY{l+s+s2}{ seconds (Viterbi, 1st smoothing \PYZhy{} greek) \PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{n+nb}{round}\PY{p}{(}\PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{start\PYZus{}time}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}
+\PY{n}{calculateAccuracy}\PY{p}{(}\PY{n}{all\PYZus{}pos}\PY{p}{,} \PY{n}{w\PYZus{}t\PYZus{}test}\PY{p}{)}
+
+\PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{all\PYZus{}pos} \PY{o}{=} \PY{n}{ViterbiHMM}\PY{p}{(}\PY{n}{p\PYZus{}emission}\PY{p}{,} \PY{n}{p\PYZus{}emission\PYZus{}init}\PY{p}{,} \PY{n}{p\PYZus{}transition}\PY{p}{,} \PY{n}{query\PYZus{}list}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{} }\PY{l+s+si}{\PYZpc{}s}\PY{l+s+s2}{ seconds (Viterbi, 2nd smoothing \PYZhy{} greek) \PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{n+nb}{round}\PY{p}{(}\PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{start\PYZus{}time}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}
+\PY{n}{calculateAccuracy}\PY{p}{(}\PY{n}{all\PYZus{}pos}\PY{p}{,} \PY{n}{w\PYZus{}t\PYZus{}test}\PY{p}{)}
+
+\PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{all\PYZus{}pos} \PY{o}{=} \PY{n}{ViterbiHMM}\PY{p}{(}\PY{n}{p\PYZus{}emission}\PY{p}{,} \PY{n}{p\PYZus{}emission\PYZus{}init}\PY{p}{,} \PY{n}{p\PYZus{}transition}\PY{p}{,} \PY{n}{query\PYZus{}list}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{} }\PY{l+s+si}{\PYZpc{}s}\PY{l+s+s2}{ seconds (Viterbi, 3th smoothing \PYZhy{} greek) \PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{n+nb}{round}\PY{p}{(}\PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{start\PYZus{}time}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}
+\PY{n}{calculateAccuracy}\PY{p}{(}\PY{n}{all\PYZus{}pos}\PY{p}{,} \PY{n}{w\PYZus{}t\PYZus{}test}\PY{p}{)}
+
+\PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{all\PYZus{}pos} \PY{o}{=} \PY{n}{ViterbiHMM}\PY{p}{(}\PY{n}{p\PYZus{}emission}\PY{p}{,} \PY{n}{p\PYZus{}emission\PYZus{}init}\PY{p}{,} \PY{n}{p\PYZus{}transition}\PY{p}{,} \PY{n}{query\PYZus{}list}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{,} \PY{n}{tag\PYZus{}occ\PYZus{}singleoccWord} \PY{o}{=} \PY{n}{tag\PYZus{}occ\PYZus{}singleoccWord}\PY{p}{,} \PY{n}{single\PYZus{}occ\PYZus{}words} \PY{o}{=} \PY{n}{single\PYZus{}occ\PYZus{}words}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{} }\PY{l+s+si}{\PYZpc{}s}\PY{l+s+s2}{ seconds (Viterbi, 4th smoothing \PYZhy{} greek) \PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{n+nb}{round}\PY{p}{(}\PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{start\PYZus{}time}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}
+\PY{n}{calculateAccuracy}\PY{p}{(}\PY{n}{all\PYZus{}pos}\PY{p}{,} \PY{n}{w\PYZus{}t\PYZus{}test}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+--- 3.37 seconds (Calculate probability - latin) ---
+--- 135.14 seconds (Viterbi, 1st smoothing - greek) ---
+Right PoS: 14625
+Wrong PoS: 6334
+Accuracy: 0.6977909251395582
+--- 129.54 seconds (Viterbi, 2nd smoothing - greek) ---
+Right PoS: 15020
+Wrong PoS: 5939
+Accuracy: 0.7166372441433274
+--- 129.3 seconds (Viterbi, 3th smoothing - greek) ---
+Right PoS: 14633
+Wrong PoS: 6326
+Accuracy: 0.6981726227396345
+--- 129.86 seconds (Viterbi, 4th smoothing - greek) ---
+Right PoS: 15062
+Wrong PoS: 5897
+Accuracy: 0.7186411565437282
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{26}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{all\PYZus{}pos} \PY{o}{=} \PY{n}{Baseline}\PY{p}{(}\PY{n}{w\PYZus{}t\PYZus{}occ}\PY{p}{,} \PY{n}{query\PYZus{}list}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{} }\PY{l+s+si}{\PYZpc{}s}\PY{l+s+s2}{ seconds (Baseline \PYZhy{} greek) \PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{n+nb}{round}\PY{p}{(}\PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{start\PYZus{}time}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}
+\PY{n}{calculateAccuracy}\PY{p}{(}\PY{n}{all\PYZus{}pos}\PY{p}{,} \PY{n}{w\PYZus{}t\PYZus{}test}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+--- 138.1 seconds (Baseline - greek) ---
+Right PoS: 13541
+Wrong PoS: 7418
+Accuracy: 0.6460709003292142
+    \end{Verbatim}
+
+    \hypertarget{analisi-dei-risultati}{%
+\subsection{Analisi dei risultati}\label{analisi-dei-risultati}}
+
+\hypertarget{accuratezza}{%
+\subsubsection{Accuratezza}\label{accuratezza}}
+
+\hypertarget{latino}{%
+\paragraph{Latino}\label{latino}}
+
+Per quanto riguarda la prima lingua presa in considerazione, il latino,
+abbiamo dei risultati interessanti. Le prestazioni in termini di
+accuratezza registrate dall'algoritmo \emph{baseline} sono assolutamente
+notevoli: parliamo del \textbf{\emph{95\%}} delle parole taggate
+correttamente. L'applicazione del modello di Markov, in particolare
+dell'algoritmo di Viterbi, non ha portato a delle migliorie
+significative, anzi, l'utilizzo delle più generiche tecniche di
+smoothing portano a una diminuzione dell'accuratezza del 2\%.
+
+Tabella riassuntiva:
+
+\begin{longtable}[]{@{}cccc@{}}
+\toprule
+Tecnica di smoothing & Accuratezza & PoS corretti & PoS errati \\
+\midrule
+\endhead
+Baseline & 0.94974 & 22869 & 1210 \\
+Smoothing 1 & 0.92831 & 22353 & 1726 \\
+Smoothing 2 & 0.92998 & 22393 & 1686 \\
+Smoothing 3 & 0.93176 & 22436 & 1643 \\
+Smoothing 4 & 0.94173 & 22676 & 1403 \\
+\bottomrule
+\end{longtable}
+
+\hypertarget{greco}{%
+\paragraph{Greco}\label{greco}}
+
+Discorso diverso per quanto riguarda la lingua greca. L'accuratezza di
+tutte le strategie non è elevata. L'algoritmo base si avvicina al
+\textbf{\emph{65\%}}. In questo caso l'utilizzo dell'algoritmo di
+Viterbi ha comportato delle migliorie importanti con un:
+
+\begin{itemize}
+\tightlist
+\item
+  +6\% applicando la prima e la terza strategia di smoothing
+\item
+  +7\% con la seconda e la quarta tecnica di smoothing
+\end{itemize}
+
+Nel dettaglio:
+
+\begin{longtable}[]{@{}cccc@{}}
+\toprule
+Tecnica & Accuratezza & PoS corretti & PoS errati \\
+\midrule
+\endhead
+Baseline & 0.64607 & 13541 & 7418 \\
+Smoothing 1 & 0.69779 & 14625 & 6334 \\
+Smoothing 2 & 0.71663 & 15020 & 5939 \\
+Smoothing 3 & 0.69817 & 14633 & 6326 \\
+Smoothing 4 & 0.71864 & 15062 & 5897 \\
+\bottomrule
+\end{longtable}
+
+\hypertarget{tempi-di-esecuzione}{%
+\subsubsection{Tempi di esecuzione}\label{tempi-di-esecuzione}}
+
+\hypertarget{latino-1}{%
+\paragraph{Latino}\label{latino-1}}
+
+La complesità temporale delle varie strategie è allineata: sia la
+\emph{baseline} che \emph{Viterbi} impiegano all'incirca
+\textbf{\emph{31}} secondi. Nel caso di Viterbi va considerato anche il
+tempo trascorso per calcolare le probabilità di emissione e di
+transizione (quest'ultima è calcolata in poco più di 4 secondi).
+
+\begin{longtable}[]{@{}cc@{}}
+\toprule
+Tecnica di smoothing & Tempo di esecuzione (s) \\
+\midrule
+\endhead
+Baseline & 32.59 \\
+Smoothing 1 & 31.06 \\
+Smoothing 2 & 30.97 \\
+Smoothing 3 & 31.19 \\
+Smoothing 4 & 31.11 \\
+\bottomrule
+\end{longtable}
+
+\hypertarget{greco-1}{%
+\paragraph{Greco}\label{greco-1}}
+
+L'andamento si ripete anche per il greco: pressochè paragonabili i tempi
+di esecuzione di \emph{baseline} e \emph{Viterbi} i quali aumentano
+notevolmente, se confrontati con il latino, a causa dell'incremento del
+corpus. Anche in questo caso c'è da aggiungere circa 3 secondi per il
+calcolo delle probabilità di transizione ed emissione necessarie per
+\emph{Viterbi}.
+
+\begin{longtable}[]{@{}cc@{}}
+\toprule
+Tecnica di smoothing & Tempo di esecuzione (s) \\
+\midrule
+\endhead
+Baseline & 138.1 \\
+Smoothing 1 & 135.14 \\
+Smoothing 2 & 129.54 \\
+Smoothing 3 & 129.3 \\
+Smoothing 4 & 129.86 \\
+\bottomrule
+\end{longtable}
+
+\hypertarget{conclusioni}{%
+\subsubsection{Conclusioni}\label{conclusioni}}
+
+I risultati empirici ottenuti dimostrano che non sempre conviene attuare
+delle strategie più articolate per risolvere questo tipo di problemi. Il
+PoS tagger base per il latino, dopo una fase di pre-processing delle
+parole all'interno del corpus, raggiunte un livello di accuratezza già
+parecchio elevato. Migliorare questo già ottimo risultato non è
+scontato. Per il greco, invece, partiamo da una \emph{baseline}
+decisamente più bassa e che l'algoritmo di Viterbi riesce a migliorare
+senza troppi problemi. Questo risultato è condizionato dalla presenza di
+un numero superiore di frasi presenti nel \emph{corpus} train del greco
+e che consente un più accurato calcolo delle probabilità.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+
+\end{Verbatim}
+\end{tcolorbox}
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
