@@ -1,2 +1,2 @@
 # GreekLatinPoSTag
-Greek and Latin PoS tagger
+Greek and Latin PoS tagger with dynamic programming and Viterbi
